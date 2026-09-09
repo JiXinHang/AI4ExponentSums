@@ -1,0 +1,2442 @@
+% Standalone English manuscript. Compile twice with pdflatex.
+% Full integration of the long-direction fourth-derivative refinement.
+% All 51 affine certificates and the fourth/fifth derivative identities
+% are included explicitly; no external TeX inputs are required.
+% Status: candidate proof awaiting independent mathematical verification.
+\documentclass[11pt,a4paper]{article}
+\usepackage[OT1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=28mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,longtable,array}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\allowdisplaybreaks[2]
+\numberwithin{equation}{section}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\N}{\mathbb N}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\R}{\mathbb R}
+\newcommand{\Q}{\mathbb Q}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\dd}{\,\mathrm d}
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+\DeclareMathOperator*{\Res}{Res}
+\DeclareMathOperator{\Hess}{Hess}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator{\grad}{grad}
+\newcommand{\Leg}{\mathcal L}
+\newcommand{\Rfine}{\mathcal R_{\mathrm{fine}}}
+\newcommand{\pint}{p_{\mathrm{int}}}
+\newcommand{\hcap}{h_{\mathrm{cap}}}
+\newcommand{\hthreshold}{h_{\mathrm t}}
+\newcommand{\Fzero}{F_0}
+\newcommand{\Qone}{\mathcal Q_1}
+\setlength{\emergencystretch}{2em}
+
+\title{A candidate bound for the ternary divisor problem\\
+\large A long-direction fourth-derivative refinement}
+\author{}
+\date{9 September 2026}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+We give a detailed argument intended to establish the pointwise estimate
+$\Delta_3(x)\ll_\eps x^{541/1209+\eps}$ for the classical symmetric ternary
+divisor problem. The argument combines a truncated Voronoi formula,
+differencing, successive one-dimensional van der Corput transforms on sharp
+domains, and a fourth-derivative estimate along the longer terminal dual
+direction. A sublevel decomposition treats zeros of that derivative by
+using a uniform same-direction fourth/fifth derivative condition.
+All stationary weights,
+short dual ranges and integer choices of differencing parameters are retained.
+Explicit polynomial certificates verify the needed model nondegeneracy, and
+51 rational affine identities verify the global parameter inequalities.
+\end{abstract}
+
+\noindent\textbf{Working manuscript.}
+This version integrates the long-direction refinement into the full argument,
+including the boundary subregion, exact derivative certificates and all global
+parameter certificates. This revision gives explicit uniform inverse charts,
+sharp-fiber parameterizations, endpoint accounting, and a separate complexity
+transfer lemma for the complete exact phase construction.
+
+\tableofcontents
+
+\section{The proposed result, conventions and external inputs}
+\label{sec:inputs}
+For $n\in\N$, put
+\[
+ d_3(n)=\#\{(a,b,c)\in\N^3:abc=n\},\qquad
+ \Delta_3(x)=\sum_{n\le x}d_3(n)
+   -\Res_{s=1}\frac{\zeta(s)^3x^s}{s}.
+\]
+Throughout, $e(t)=\exp(2\pi i t)$ and
+\begin{equation}\label{eq:parameters}
+ \theta=\frac{541}{1209},\qquad
+ \rho=\frac{265}{403},\qquad
+ u_0=\frac{138}{403}=3\theta-1.
+\end{equation}
+These constants satisfy
+\begin{equation}\label{eq:endpoint-identities}
+ \frac23-\frac\rho3=\theta,
+ \qquad \frac13+\frac{u_0}{3}=\theta.
+\end{equation}
+
+\begin{theorem}[Proposed bound]\label{thm:main}
+For every $\eps>0$ and all sufficiently large real $x$,
+\[
+ \Delta_3(x)\ll_\eps x^{541/1209+\eps}.
+\]
+\end{theorem}
+
+The proof occupies Sections~\ref{sec:operations}--\ref{sec:assembly} and the
+two appendices. No unproved spacing or moment estimate is an input.
+
+\subsection{Uniformity and scales}
+All normalized phase variables lie in fixed compact boxes with slightly larger
+open neighborhoods. When positive variables are used, these neighborhoods stay
+away from zero. Domains are semialgebraic sets of bounded description
+complexity: the number and degrees of their defining polynomial conditions are
+bounded independently of the large parameters. Their real coefficients and
+sharp endpoints may vary. A fixed number of charts, Boolean operations,
+projections and rectangular cuts is allowed.
+
+The constants in $\ll$ may depend on these fixed complexity and derivative
+bounds, and on a small positive auxiliary parameter $\eta$, but not on $x$.
+All physical scales have at most polynomial size in $x$. Fixed powers of
+$\log x$ will be absorbed into $x^\eta$, with $\eta$ reduced finitely often
+before the final choice of $\eps$. In intermediate displays, the same symbol
+$x^\eta$ may denote such a rescaled loss.
+
+Dyadic lengths and bounding rectangles are understood up to fixed factors.
+Whenever a one-dimensional theorem requires its length parameter to be at
+least the actual interval length, take a sufficiently large fixed multiple of
+the nominal ambient scale. This changes only the comparison constants. In
+particular, the length of an individual sharp fiber need not be comparable to
+the ambient scale.
+
+In the global argument we distinguish the physical phase scale from its exact
+exponent budget:
+\begin{equation}\label{eq:F-convention}
+ R=27x,\qquad F=(RN)^{1/3}=3\Fzero,
+ \qquad \Fzero=(xN)^{1/3}.
+\end{equation}
+Exact stationary formulas retain $F$. Nominal parameter choices use $\Fzero$.
+Also, $\Pi$ denotes a nominal product of shift lengths, while
+$\pint=q_1q_2$ denotes its integer realization. Only comparability, not equality,
+will be used between these two products.
+
+\subsection{Analytic inputs}
+We use the following published estimates, in the indicated normalizations.
+
+First, Lemma~3 of Ivi\'c--Zhai~\cite{IZ}, specialized to $k=3$, gives
+\begin{equation}\label{eq:voronoi}
+ \Delta_3(x)=\frac{x^{1/3}}{\pi\sqrt3}
+ \sum_{n\le Y}d_3(n)n^{-2/3}
+       \cos\bigl(6\pi(xn)^{1/3}\bigr)
+ +O_\eta\bigl(x^{2/3+\eta}Y^{-1/3}\bigr),
+ \qquad 1\ll Y\ll x.
+\end{equation}
+An endpoint convention at an integer $x$ changes the left side by
+$O(d_3(x))=O_\eta(x^\eta)$, which is harmless here.
+
+Second, the one-dimensional B transform in Vandehey~\cite[Theorem~1.1]{Vand}
+applies on an interval $[a,b]$ with ambient length $M\ge b-a$ if
+\[
+ f''\asymp T/M^2>0,\qquad
+ |f'''|\ll T/M^3,\qquad |f''''|\ll T/M^4.
+\]
+For a real amplitude $g$ of bounded variation, it replaces the sum by the
+stationary sum with terms
+\[
+ \frac{g(x_r)}{\sqrt{f''(x_r)}}
+ e\bigl(f(x_r)-rx_r+1/8\bigr),\qquad f'(x_r)=r,
+\]
+and an error
+\begin{equation}\label{eq:one-B-error}
+ \ll \bigl(\Var(g)+|g(a)|\bigr)
+ \left(\frac{M}{\sqrt T}
+ +\log\bigl(2+f'(b)-f'(a)\bigr)\right).
+\end{equation}
+Negative curvature is handled by conjugation. In unweighted applications,
+changes between open, closed and half-weight endpoint conventions cost
+$O(1+M/\sqrt T)$. We explicitly retain this cost. The statement permits an
+ambient $M$ larger than the fiber length.
+
+Third, the classical third-derivative estimate, as recorded in
+Heath-Brown~\cite[equation~(1), $k=3$]{HB}, is
+\begin{equation}\label{eq:third-test}
+ \sum_{n\in I}e(f(n))
+ \ll M\lambda^{1/6}+M^{1/2}\lambda^{-1/6}
+ \quad\text{if}\quad |f'''|\asymp\lambda,
+ \quad |I|\le M,\quad M\ge1.
+\end{equation}
+The derivative has a fixed sign on each interval under consideration. For
+shorter fibers one may first use their actual length and then enlarge the
+bound to $M$; isolated points are handled separately when needed.
+
+We also use the fourth-derivative instance of the same classical estimate,
+Heath-Brown~\cite[equation~(1), $k=4$]{HB}:
+\begin{equation}\label{eq:fourth-test}
+ \sum_{n\in I}e(f(n))
+ \ll M\lambda^{1/14}+M^{3/4}\lambda^{-1/14},
+ \qquad |f^{(4)}|\asymp\lambda,\quad |I|\le M,\quad M\ge1.
+\end{equation}
+The same endpoint and sign conventions apply. If $\lambda$ is bounded below
+by a positive constant, the first term already covers the trivial estimate.
+
+Finally, we use real quantifier elimination with a format bound depending
+only on the input format; see Basu~\cite[Section~2]{Basu}.
+Lemmas~\ref{lem:sa-calculus} and~\ref{lem:sharp-fibers} below spell out
+the resulting uniform graph, projection and fiber assertions. These
+facts do not supply an estimate for lattice points near a curved boundary.
+
+\section{Elementary operations and a sharp two-dimensional B inequality}
+\label{sec:operations}
+
+\begin{lemma}[A inequality]\label{lem:A}
+Let $D$ be a finite lattice set in a rectangle of side lengths $O(M_1),O(M_2)$,
+where $M_1,M_2\ge1$, and let $1\le q_j\ll M_j$ be integers. Then
+\begin{align}\label{eq:A2-general}
+ \left|\sum_{z\in D}e(f(z))\right|^2
+ &\ll \frac{(M_1M_2)^2}{q_1q_2}\notag\\
+ &\quad+\frac{M_1M_2}{q_1q_2}
+ \sum_{\substack{|r_j|<q_j\\r\ne0}}
+ \left|\sum_{z\in D\cap(D-r)}e\bigl(f(z+r)-f(z)\bigr)\right|.
+\end{align}
+The triangular weights may instead be retained before absolute values.
+\end{lemma}
+\begin{proof}
+Extend the original summand by zero. Average over the $q_1q_2$ shifts in a
+rectangle and apply Cauchy's inequality on the common enlarged support, which
+has $O(M_1M_2)$ points. Expanding the square gives multiplicities
+$(q_1-|r_1|)(q_2-|r_2|)$. The diagonal gives the first term; dividing the
+off-diagonal multiplicities by $q_1q_2$ gives weights at most one. No
+regularity of the boundary is required. If $q_1=1$, the first shift coordinate
+is identically zero.
+\end{proof}
+
+\begin{lemma}[Rectangular Abel summation]\label{lem:Abel}
+Let $a$ be $C^2$ on an ambient rectangle with arbitrary positive side lengths
+$M_1,M_2$. For any finite base array supported on $D$,
+\begin{equation}\label{eq:Abel}
+ \left|\sum_{z\in D}a(z)e(f(z))\right|
+ \ll V_{\rm rect}(a)
+ \sup_J\left|\sum_{z\in D\cap J}e(f(z))\right|,
+\end{equation}
+where $J$ ranges over rectangles and
+\[
+ V_{\rm rect}(a)=\norm a_\infty
+ +M_1\norm{a_1}_\infty+M_2\norm{a_2}_\infty
+ +M_1M_2\norm{a_{12}}_\infty.
+\]
+Fixed coefficients may be retained in the base array on both sides.
+\end{lemma}
+\begin{proof}
+Apply integration by parts in each coordinate to the finite measure defined
+by the base array. The boundary, edge and interior terms have exactly the
+four variation costs displayed above. Keep $1_D$ inside every partial sum.
+The proof works when a side length is less than one; no extension to a
+rectangle of side length one is necessary.
+\end{proof}
+
+\subsection{Uniform formulas, sharp fibers and inverse charts}
+
+We use the following precise convention for complexity. A real formula has
+\emph{format at most $B$} if it uses at most $B$ free and quantified scalar
+variables, at most $B$ polynomial conditions and Boolean or quantifier
+operations, and polynomials of degree at most $B$. Real coefficients are
+unrestricted. Parameters, including cut endpoints, are free variables.
+Descriptions with arbitrary coefficients fit this convention by treating
+the coefficients as parameters; only finitely many Boolean patterns are
+possible at a fixed format bound.
+By quantifier elimination over the reals, a formula of format $B$ has an
+equivalent quantifier-free formula whose format is at most a number $q(B)$.
+Only the existence of $q(B)$ is used; see \cite[Section~2]{Basu}.
+For a function, complexity means the format of its graph. Thus the
+``algebraic families'' below are smooth functions with uniformly
+semialgebraic graphs, with their real branches included in those graphs.
+
+\begin{lemma}[Uniform semialgebraic calculus]\label{lem:sa-calculus}
+Fix a format bound $B$, a derivative order $r$, and a number $L$ of
+operations. Starting with sets and function graphs of format at most $B$,
+each of the following operations, and any sequence of at most $L$ of them,
+produces a graph or set of bounded format, depending only on $B,r,L$:
+Boolean operations, coordinate projections, images and preimages under
+the given maps, affine changes and translations, arithmetic operations
+on their natural domains, derivatives of order at most $r$ where they
+exist, and inverse maps restricted to a specified injective branch.
+Restrictions by derivative inequalities are included. The same conclusion
+holds for a difference quotient at any nonzero step, uniformly as that
+step tends to zero, and for its derivative extension at zero.
+Every one-dimensional fiber of any resulting set has a uniformly bounded
+number of interval and point components.
+\end{lemma}
+\begin{proof}
+Composition and images are expressed by existentially quantified graph
+variables. Addition and multiplication add the equations $w=y_1+y_2$
+and $w=y_1y_2$; division adds $wy_2=y_1$, $y_2\ne0$.
+The graph of the inverse of $H$ on a specified set $C$ is precisely
+\[
+ \{(y,z):z\in C,\ (z,y)\in\operatorname{graph}(H)\}.
+\]
+Injectivity makes this relation single-valued. No choice of an unspecified
+root is part of this operation.
+
+For completeness, if $h$ is differentiable on an open spatial domain,
+$v=\partial_i h(z)$ is expressed by the usual limit formula
+\[
+ \forall\epsilon>0\ \exists\delta>0\ \forall t\quad
+ 0<|t|<\delta\ \Longrightarrow\
+ |h(z+te_i)-h(z)-tv|<\epsilon|t|,
+\]
+with $\delta$ also required to keep the indicated segment in the domain.
+Replace function values by graph variables. The last inequality is the
+polynomial inequality
+$(y_t-y_0-tv)^2<\epsilon^2t^2$; the domain condition also has a fixed
+formula. Iteration gives every derivative of the fixed order $r$.
+For $a\ne0$, the difference quotient has graph
+\begin{equation}\label{eq:sa-quotient-graph}
+ \exists y_0,y_1:\quad
+ (z,y_0)\in\operatorname{graph}(h),\quad
+ (z+ae_i,y_1)\in\operatorname{graph}(h),\quad
+ aw=y_1-y_0.
+\end{equation}
+At $a=0$ use the derivative graph as a separate parameter piece. A general
+specified direction is handled by replacing $e_i$ by that direction.
+
+Every construction adds a bounded number of variables, conditions and
+degrees. Apply $q$ after each of the finitely many operations. This gives
+a recursive bound depending only on $B,r,L$, without bounds on coefficient
+sizes or on nonzero denominators. After fixing all but one spatial
+coordinate, a quantifier-free description involves at most $s$ univariate
+polynomials of degrees at most $d$, for uniformly bounded $s,d$.
+Discard the identically zero polynomials. Their at most $sd$ real roots
+cut the line into at most $2sd+1$ points and open intervals on which every
+condition is constant. This proves the fiber assertion, including
+degenerate parameter values.
+\end{proof}
+
+\begin{lemma}[Sharp-fiber parameterization and endpoint accounting]
+\label{lem:sharp-fibers}
+Let $S_\alpha\subset\R^2$ be a bounded semialgebraic family of fixed
+format; $\alpha$ includes all cut endpoints. For $i=1,2$, define its
+coordinate-fiber interior by
+\begin{equation}\label{eq:fiber-interior}
+ \mathfrak I_iS_\alpha
+ =\{z:\exists\delta>0\ \forall t\ (|t|<\delta
+                \Longrightarrow z+te_i\in S_\alpha)\}.
+\end{equation}
+This is a family of bounded format contained in $S_\alpha$.
+There is a uniform integer $N_*$ such that every $i$-fiber of
+$\mathfrak I_iS_\alpha$ is a disjoint union of at most $N_*$ open
+intervals, and every fiber of $S_\alpha\setminus\mathfrak I_iS_\alpha$
+contains at most $N_*$ points.
+
+The interval endpoints can be labeled by a bounded number of
+semialgebraic functions of $\alpha$ and the other coordinate, on
+semialgebraic parameter pieces of bounded format. Consequently, if the
+other coordinate ranges over an interval of length $O(M)$, replacing
+$S_\alpha$ by $\mathfrak I_iS_\alpha$ in a lattice sum with summands of
+absolute value at most $A$ costs $O(A(1+M))$.
+\end{lemma}
+\begin{proof}
+Formula \eqref{eq:fiber-interior} and Lemma~\ref{lem:sa-calculus} give
+bounded format. Apply the root count in that lemma to a fiber. The
+interior consists of its open interval components. What remains consists
+only of included interval endpoints and isolated points, with a uniform
+bound on their total number. This includes fibers of dimension zero and
+empty fibers.
+
+Here is an explicit endpoint parameterization. Fiberwise closure is
+defined by
+\[
+ z\in\operatorname{cl}_i S_\alpha
+ \quad\Longleftrightarrow\quad
+ \forall\epsilon>0\ \exists t\quad
+ |t|<\epsilon,\quad z+te_i\in S_\alpha.
+\]
+The fiberwise boundary
+$\operatorname{cl}_i S_\alpha\setminus\mathfrak I_iS_\alpha$
+is a finite set of uniformly bounded cardinality. Partition the parameter
+space, including the other coordinate, by that cardinality $k$. Its
+ordered elements $b_1<\cdots<b_k$ have graphs defined by membership in
+this boundary and the assertion that exactly $j-1$ boundary elements lie
+below $b_j$. The latter assertion uses at most $N_*$ quantified variables:
+list these elements and require every smaller boundary element to be one
+of them. Thus all these graphs have bounded format.
+
+For adjacent boundary elements, membership of their midpoint decides
+whether the entire open gap belongs to the fiber. Membership of each
+$b_j$ decides its endpoint convention. Partition further by these
+finitely many flags. Because the fibers are bounded, the two exterior
+gaps are empty. This describes every fiber by ordered open intervals and
+individually included endpoints. The labels may be discontinuous; the
+argument neither differentiates them nor assumes continuity in any
+parameter. Summing the uniform endpoint count over the $O(1+M)$ integer
+values of the other coordinate proves the final assertion.
+\end{proof}
+
+\begin{lemma}[Common buffered inverse branches]\label{lem:buffered-inverses}
+Let $K\subset\R^2$ be a fixed compact rectangle, and let $\Omega$ contain
+a fixed neighborhood of $K$. Suppose $F_0,F\in C^m(\Omega)$, $m\ge4$,
+have norms at most $M$ and
+\[
+ |\det\Hess F_0|\ge c,\qquad
+ \max(|F_{0,11}|,|F_{0,22}|)\ge c
+\]
+on that neighborhood. There are positive constants $r,R,\delta_0,b$
+and an integer $J$, depending only on $K,\Omega,M,c$, with the following
+properties whenever $\norm{F-F_0}_{C^2}\le\delta_0$.
+
+There are $J$ source rectangles $C_j$ covering $K$, each contained with
+a fixed buffer in a ball $B_j=B(z_j,R)$ with
+$\overline{B_j}\subset\Omega$, and a pivot
+$i_j\in\{1,2\}$ on each ball. Both $F$ and $F_0$ have nonzero Hessian
+determinant and nonzero $i_j$-th pure second derivative throughout $B_j$,
+with uniform lower bounds and the same respective signs. For $H=F,F_0$
+write
+\[
+ M_H(z)=(H_i(z),z_{3-i}),\qquad N_H(z)=\grad H(z)
+ \quad(i=i_j).
+\]
+Both maps are injective on $B_j$. There are axis-parallel rectangles
+$A_j^-\Subset A_j^+$ and $Q_j^-\Subset Q_j^+$, common to $F,F_0$, such
+that both inverse maps are defined on neighborhoods of $\overline{A_j^+}$
+and $\overline{Q_j^+}$, respectively, and
+\begin{align}
+ M_H(C_j)&\subset A_j^-,&N_H(C_j)&\subset Q_j^-,\notag\\
+ N_H^{-1}(Q_j^+)&\subset M_H^{-1}(A_j^+)\subset B_j.
+ \label{eq:compatible-rectangles}
+\end{align}
+All the rectangles have fixed positive side lengths, and each inner-to-outer
+buffer is at least $b$. The inverse maps have uniform $C^{m-1}$ bounds.
+The two Legendre functions, formed using these specified inverse branches,
+satisfy, for $1\le k\le m-2$,
+\begin{equation}\label{eq:inverse-stability}
+ \norm{N_F^{-1}-N_{F_0}^{-1}}_{C^k(Q_j^+)}
+ +\norm{\Leg F-\Leg F_0}_{C^k(Q_j^+)}
+ \le C_k\norm{F-F_0}_{C^{k+1}(\Omega)}.
+\end{equation}
+The analogous inverse comparison holds on $A_j^+$.
+
+If the phase graphs form a family of bounded format, all the chart
+choices, inverse graphs and rectangles above can be parameterized with
+bounded format. The source centers can be fixed in advance. The pivot
+may depend on the model parameter. No chart depends on a sharp domain,
+on a cut endpoint, or on a physical aspect ratio.
+\end{lemma}
+\begin{proof}
+Increase $M\ge1$ to bound the operator norms of all Jacobians and their
+first derivatives used here. At a source center, the least singular value
+of $\Hess F_0$ is at least $c/M$. Choose a pivot with
+$|F_{0,ii}(z_j)|\ge c$. The absolute determinant of the mixed Jacobian is
+$|F_{0,ii}|$; its norm is bounded, so it too has a uniform least singular
+value $\sigma>0$.
+By decreasing a fixed $R>0$, arrange that $B(z_j,R)\subset\Omega$,
+the selected pure derivative is at least $c/2$ in absolute value there,
+and both model Jacobians vary from their central values by at most
+$\sigma/8$. Decrease $\delta_0$ so that the perturbed Jacobians differ
+from the model Jacobians by at most $\sigma/8$. These choices are uniform
+in the center and parameter. They also preserve determinant and pivot
+signs throughout the connected ball.
+
+For either map $H_\nu=M_{F_\nu}$ or $N_{F_\nu}$, where $\nu=0,1$
+denotes model and exact, put $A=DH_0(z_j)$. Then
+\[
+ \norm{DH_\nu(z)-A}\le\sigma/4,\qquad \norm{A^{-1}}\le\sigma^{-1}
+ \quad(z\in B_j).
+\]
+Integration on the segment between $z,w\in B_j$ gives
+\begin{equation}\label{eq:inverse-co-lipschitz}
+ |H_\nu(z)-H_\nu(w)|\ge(3\sigma/4)|z-w|.
+\end{equation}
+In particular both maps are injective on the whole ball. If
+$|y-H_0(z_j)|\le\sigma R/8$ and
+$|H_1(z_j)-H_0(z_j)|\le\sigma R/8$, the map
+\[
+ z\longmapsto z+A^{-1}(y-H_\nu(z))
+\]
+is a contraction of the closed radius-$R$ ball into itself: its Lipschitz
+constant is at most $1/4$, and its displacement of the center is at most
+$R/4$. Its unique fixed point lies within $R/3$ of $z_j$.
+Thus the two images contain the same target ball of radius $\sigma R/8$,
+and their inverses there take values strictly inside $B_j$.
+
+We give the nesting choices to ensure compatibility of the two inverses.
+First choose concentric mixed rectangles $A^-\Subset A^+$ about
+$M_{F_0}(z_j)$ whose closures lie strictly inside that common mixed
+target ball. If $A^+$ has half-side $a$, choose the half-side $q$ of
+$Q^+$ about $N_{F_0}(z_j)$ sufficiently small in terms of $a,M,\sigma$.
+Indeed \eqref{eq:inverse-co-lipschitz} gives
+\[
+ |N_H^{-1}(y)-z_j|
+ \le \frac4{3\sigma}
+       \bigl(|y-N_{F_0}(z_j)|+C\delta_0\bigr).
+\]
+Consequently
+\[
+ |M_H(N_H^{-1}(y))-M_{F_0}(z_j)|
+ \le \frac{4M}{3\sigma}(\sqrt2q+C\delta_0)+C\delta_0.
+\]
+Choose $q>0$ so that the first term with $\delta_0=0$ is less than
+$a/4$, and then decrease $\delta_0$ so that the whole expression is less
+than $a/2$. Choose $Q^+$ itself strictly within the common gradient
+target ball, and take $Q^-$ and $A^-$ to have half the respective outer
+half-sides. Finally choose a source half-side $r>0$ with
+$\sqrt2Mr+C\delta_0<\min(a,q)/4$, decreasing $\delta_0$ again if needed.
+Then $C_j=z_j+[-r,r]^2$ has the asserted image inclusions and fixed
+buffers. The same estimates hold on slightly larger target rectangles,
+so inverses are defined on neighborhoods of their closures. A finite
+$r$-net of $K$, fixed before any parameter is chosen, provides the source
+centers and a uniform number $J$.
+
+Implicit differentiation of $H_\nu(I_\nu(y))=y$ first gives
+$DI_\nu=(DH_\nu\circ I_\nu)^{-1}$. At order $k$, the term containing
+$D^kI_\nu$ has coefficient $DH_\nu\circ I_\nu$; every other term is a
+finite product of derivatives $D^aH_\nu$, $a\le k$, and lower derivatives
+of $I_\nu$. This proves the uniform $C^{m-1}$ bounds by induction.
+For comparison, \eqref{eq:inverse-co-lipschitz} first bounds
+$|I_1-I_0|$ by $C\norm{H_1-H_0}_\infty$. Subtract the two differentiated
+identities and induct. Evaluation of $D^kH_0$ at $I_1$ rather than $I_0$
+is controlled by its bounded next derivative. For $k\le m-2$ this gives
+$\norm{I_1-I_0}_{C^k}\le C_k\norm{F-F_0}_{C^{k+1}}$.
+The formula
+$\Leg H(y)=H(N_H^{-1}(y))-y\cdot N_H^{-1}(y)$ and
+$\grad\Leg H=-N_H^{-1}$ give \eqref{eq:inverse-stability}.
+
+Finally, use the first pivot when $|F_{0,11}(z_j)|\ge c$, and otherwise
+the second. This is a fixed semialgebraic rule. Target centers are graph
+values of the two model maps; all radii are fixed constants. An inverse
+graph is specified by $z\in B_j$ and $y=M_H(z)$ or $y=N_H(z)$.
+Lemma~\ref{lem:sa-calculus} gives the asserted format bounds, including
+all parameter-dependent choices. The lower bounds proved above make
+these graph relations unique branches.
+\end{proof}
+
+
+\subsection{The sharp B transformation}
+
+For $U,V,P\ge1$, write
+\begin{align}
+ \mathcal R(U,V,P)
+ &=\left(\frac{UV}{\sqrt P}+U+V+\sqrt P+\frac{UV}{P}\right)
+       \log(2+U+V+P),\label{eq:R}\\
+ \Rfine(U,V,P)
+ &=\left(\frac{UV}{\sqrt P}+V+\sqrt P+\frac{UV}{P}\right)
+       \log(2+U+V+P).\label{eq:Rfine}
+\end{align}
+
+\begin{lemma}[Sharp two-dimensional B inequality]\label{lem:sharpB}
+Let $f(s,t)=P\mathcal F(s/U,t/V)$, with $U,V,P\ge1$.
+On a fixed neighborhood of a compact normalized rectangle $K$, suppose
+$\mathcal F$ is uniformly $C^{20}$ bounded, its graph has bounded format,
+and
+\[
+ |\det\Hess\mathcal F|\ge c>0,\qquad
+ \max(|\mathcal F_{11}|,|\mathcal F_{22}|)\ge c.
+\]
+Let $D\subset\{(Uz_1,Vz_2):z\in K\}$ be any semialgebraic sharp domain
+of bounded format, with arbitrary real parameters and endpoint conventions.
+Then
+\begin{equation}\label{eq:sharpB}
+ \left|\sum_{D\cap\Z^2}e(f)\right|
+ \ll\frac{UV}{P}\sup_E\left|\sum_{E\cap\Z^2}e(f_j^*)\right|
+       +\mathcal R(U,V,P).
+\end{equation}
+The supremum includes one of a bounded number of specified source charts
+$j$ and two arbitrary real rectangles $J_1,J_2$. On that chart,
+\begin{equation}\label{eq:sharp-domain-family}
+ \begin{split}
+ D_{1,j}&=\mathfrak I_1D^{(j)},\qquad
+ A_{1,j}=T_{1,j}(D_{1,j})\cap J_1,\qquad
+ A_{2,j}=\mathfrak I_2A_{1,j},\\
+ E_{j,J_1,J_2}&=T_{2,j}(A_{2,j})\cap J_2.
+ \end{split}
+\end{equation}
+Here this notation is for a first-coordinate pivot; the roles of the
+coordinates are interchanged for the other pivot and the final frequency
+labels are then restored. The maps are
+$T_1(s,t)=(f_s(s,t),t)$ and $T_2(\xi,t)=(\xi,g_t(\xi,t))$, with $g$
+the mixed phase on the specified inverse branch. The phase
+$f_j^*(\xi,\zeta)=f(s,t)-\xi s-\zeta t$ uses the gradient inverse on
+that same chart.
+
+The entire family \eqref{eq:sharp-domain-family}, including the free
+rectangle endpoints, has bounded format. Each $E$ is contained in the
+gradient image of its source piece and in an inner inverse rectangle of
+side lengths $O(P/U),O(P/V)$ with a fixed normalized buffer. If
+$|\mathcal F_{11}|\ge c$ throughout, one can always use the order $s,t$
+and replace $\mathcal R$ by $\Rfine$.
+\end{lemma}
+\begin{proof}
+Apply Lemma~\ref{lem:buffered-inverses} with $F=F_0=\mathcal F$.
+Write its normalized source rectangles as $C_1,\ldots,C_J$, and their
+physical versions as $\mathcal C_j=\operatorname{diag}(U,V)C_j$.
+Use the ordered partition
+\begin{equation}\label{eq:chart-partition}
+ D^{(j)}=(D\cap\mathcal C_j)\setminus\bigcup_{i<j}\mathcal C_i,
+ \qquad D=\bigsqcup_{j=1}^J D^{(j)}.
+\end{equation}
+This assigns every real point, hence every lattice boundary point, exactly
+once. Lemma~\ref{lem:sa-calculus} bounds the format of every piece.
+Its closure stays inside the larger source ball where both inverse maps
+and the curvature bounds are valid. We estimate each piece separately.
+
+Fix a first-coordinate pivot and suppress $j$. The normalized mixed
+coordinates are $(\xi U/P,t/V)$, while the normalized final coordinates
+are $(\xi U/P,\zeta V/P)$. The mixed and gradient inverses exist on the
+full physical rectangles obtained by scaling $A^+$ and $Q^+$ from
+Lemma~\ref{lem:buffered-inverses}. Their branches agree wherever both
+descriptions apply, by \eqref{eq:compatible-rectangles} and injectivity
+on the source ball. In particular they agree on every set in
+\eqref{eq:sharp-domain-family}.
+
+Put $D_1=\mathfrak I_1D$. Lemma~\ref{lem:sharp-fibers} shows that
+discarding $D\setminus D_1$ costs $O(1+V)$. For every integer $t$, the
+remaining fiber is a union of at most $N_*$ disjoint open intervals
+$(a,b)$. Its closure lies inside the buffered source environment and
+\[
+ |f_{ss}|\asymp P/U^2,\qquad
+ |f_{sss}|\ll P/U^3,\qquad |f_{ssss}|\ll P/U^4.
+\]
+Apply the one-dimensional B theorem to $[a,b]$ with ambient length a
+fixed multiple of $U$. Passing from closed or half-weight original
+endpoints to $(a,b)$ costs at most two original summands. Passing to
+the strictly interior stationary range $f_s((a,b),t)$ costs at most two
+stationary summands, each of size $O(U/\sqrt P)$. Since $f_{ss}$ has
+constant sign on the entire chart, the stationary point in this interval
+is unique and all its Maslov factors equal $e(\operatorname{sgn}(f_{ss})/8)$.
+
+Thus, with $L_0=\log(2+U+V+P)$, the exact first transformed expression is
+\[
+ \sum_{D\cap\Z^2}e(f)
+ =e(\operatorname{sgn}(f_{ss})/8)\frac U{\sqrt P}
+   \sum_{T_1(D_1)\cap\Z^2}a_1(\xi,t)e(g(\xi,t))+O(E_1),
+\]
+where
+\begin{equation}\label{eq:E1}
+ E_1\ll(1+V)(1+U/\sqrt P)L_0.
+\end{equation}
+This includes the B error, all original endpoint decisions, all dual
+endpoint decisions, and all isolated original fibers. Disjoint source
+intervals give disjoint open stationary intervals because $T_1$ is
+injective. Hence the displayed dual sum has multiplicity one.
+
+Writing $z=M_{\mathcal F}^{-1}(\xi U/P,t/V)$, the amplitude and mixed
+phase are
+\[
+ a_1(\xi,t)=|\mathcal F_{11}(z)|^{-1/2},\qquad
+ g(\xi,t)=f(s(\xi,t),t)-\xi s(\xi,t).
+\]
+The amplitude has bounded $C^2$ norm in normalized mixed coordinates on
+the full outer rectangle. Lemma~\ref{lem:Abel} therefore bounds its
+weighted sum by a constant times
+\[
+ \sup_{J_1}\left|\sum_{A_1\cap\Z^2}e(g)\right|,
+ \qquad A_1=T_1(D_1)\cap J_1.
+\]
+The cuts may be taken within the mixed ambient rectangle; all their
+endpoints are free real parameters. The variation bound remains uniform
+when $P/U<1$, because the corresponding derivative factor is $U/P$ and
+the ambient side factor is $P/U$.
+
+On this same mixed environment, implicit differentiation gives
+\begin{equation}\label{eq:mixed-curvature}
+ g_{tt}=f_{tt}-\frac{f_{st}^2}{f_{ss}}
+       =\frac{\det\Hess f}{f_{ss}},\qquad
+ |g_{tt}|\asymp P/V^2.
+\end{equation}
+The third and fourth $t$ derivatives are $O(P/V^3)$ and $O(P/V^4)$:
+this follows by differentiating the mixed inverse, whose normalized
+derivatives are uniformly bounded by Lemma~\ref{lem:buffered-inverses}.
+The sign of $g_{tt}$ is constant because both determinant and pivot signs
+are constant throughout the source ball.
+
+There are $O(1+P/U)$ integer values of $\xi$ in the mixed rectangle.
+For each, replace the $t$ fiber of $A_1$ by its interior, setting
+$A_2=\mathfrak I_2A_1$. Its discarded points cost $O(1)$ per $\xi$.
+Apply the one-dimensional B theorem on each remaining open interval,
+as above, now with ambient length a fixed multiple of $V$. Original
+endpoint changes cost $O(1)$ and dual endpoint changes $O(V/\sqrt P)$
+per interval. The number of intervals is uniformly bounded by
+Lemma~\ref{lem:sharp-fibers}, uniformly in $J_1$. After multiplying by
+the preceding Abel factor $O(U/\sqrt P)$, the total second error is
+\begin{equation}\label{eq:E2}
+ E_2\ll\frac U{\sqrt P}(1+P/U)(1+V/\sqrt P)L_0.
+\end{equation}
+
+Set $D_2=T_1^{-1}(A_2)$. The identity $g_t=f_t\circ T_1^{-1}$ gives
+$T_2T_1=\grad f$ and therefore
+\begin{equation}\label{eq:domain-provenance}
+ E=T_2(A_2)\cap J_2=\grad f(D_2)\cap J_2
+   \subset\grad f(D),\qquad D_2\subset D_1\subset D.
+\end{equation}
+The second stationary phase is exactly $f_j^*$ on the original gradient
+branch. Its amplitude is $V/\sqrt P$ times the function
+\[
+ a_2(\xi,\zeta)
+ =\left|\frac{\mathcal F_{11}}{\det\Hess\mathcal F}\right|^{1/2}
+   \!\left(N_{\mathcal F}^{-1}(\xi U/P,\zeta V/P)\right).
+\]
+This function is defined and has bounded normalized $C^2$ norm on the
+full outer gradient rectangle, before any sharp restriction. A second
+application of Lemma~\ref{lem:Abel} gives the factor $O(UV/P)$ and the
+second rectangular cut $J_2$. No endpoint half-weight remains as a
+discontinuous amplitude: every such change was already charged in
+$E_1$ or $E_2$.
+
+Formula \eqref{eq:sharp-domain-family} is a parameterization of all the
+sets over which we take a supremum. Each operation in it has bounded
+format by Lemmas~\ref{lem:sa-calculus} and~\ref{lem:sharp-fibers}.
+In particular the fiber interiors are taken as real sets for every real
+value of the other coordinate, before restricting either coordinate to
+integers. No set of integers, parameter-dependent enumeration of lattice
+points, or union over all possible cuts is inserted into these formulas.
+Lemma~\ref{lem:buffered-inverses} and
+\eqref{eq:domain-provenance} place every $E$ in the designated inner
+gradient rectangle, irrespective of both Abel cuts.
+
+Finally, expansion of the two errors gives
+\[
+ E_1+E_2\ll
+ \left(1+2V+\frac{2U}{\sqrt P}+\frac{UV}{\sqrt P}
+             +\sqrt P+\frac{UV}{P}\right)L_0
+ \ll\Rfine(U,V,P).
+\]
+Here $1\le V$ and $U/\sqrt P\le UV/\sqrt P$.
+For the other pivot exchange $U,V$ in this calculation and restore
+$(\xi,\zeta)=(f_s,f_t)$ at the end; the common remainder is
+$\mathcal R$. Sum over the disjoint chart pieces in
+\eqref{eq:chart-partition}. Their bounded number is absorbed in the
+constant and their specified branches are included in the supremum.
+This proves \eqref{eq:sharpB} with uniform constants for all sharp
+parameters, endpoint coincidences, thin domains and short dual sides.
+\end{proof}
+
+\begin{remark}\label{rem:trivialdual}
+The complete trivial dual main term in Lemma~\ref{lem:sharpB} is
+\begin{equation}\label{eq:trivial-dual}
+ \frac{UV}{P}(1+P/U)(1+P/V)=P+U+V+UV/P.
+\end{equation}
+The rectangular hull of a transformed domain is used for counting and
+amplitude norms only; it does not replace the domain in an oscillating sum.
+Any later A operation is applied after chart splitting, so that correlations
+do not mix different inverse branches.
+\end{remark}
+
+\section{The model phase and exact finite differences}
+\label{sec:model}
+For a smooth function with an invertible local gradient, our Legendre
+convention is
+\[
+ (\Leg G)(p,q)=G(u,v)-pu-qv,\qquad (p,q)=\grad G(u,v).
+\]
+In particular $\Hess(\Leg G)=-(\Hess G)^{-1}$.
+
+\begin{lemma}[Uniform model nondegeneracy]\label{lem:model}
+Let $u,v$ vary in a fixed positive compact box and let $(a,b)$ vary in a
+compact set separated from $(0,0)$. Set
+\begin{equation}\label{eq:G0}
+ G_0(u,v)=\frac{a\sqrt u}{v}+\frac{bu^{3/2}}{v^2},
+ \qquad \Phi_0=\Leg G_0,\quad K_0=\partial_1\Phi_0,
+ \quad \Psi_0=\Leg K_0.
+\end{equation}
+On local inverse branches, the determinants of $\Hess G_0$ and $\Hess K_0$
+are uniformly bounded away from zero. Each of these two Hessians has a
+uniformly nonzero maximum of its pure second derivatives. Moreover,
+\begin{equation}\label{eq:pure-third-max}
+ \max\bigl(|\Psi_{0,111}|,|\Psi_{0,222}|\bigr)\ge c>0
+\end{equation}
+uniformly on the corresponding compact inverse environments. In addition,
+the same second coordinate satisfies
+\begin{equation}\label{eq:pure-four-five-model}
+ \max\bigl(|\Psi_{0,2222}|,|\Psi_{0,22222}|\bigr)\ge c>0.
+\end{equation}
+\end{lemma}
+\begin{proof}
+Put
+\begin{align*}
+ D&=a^2v^2+4abuv+6b^2u^2=(av+2bu)^2+2b^2u^2,\\
+ E&=a^2v^2+6abuv+18b^2u^2=(av+3bu)^2+9b^2u^2.
+\end{align*}
+Direct differentiation, with $\Hess K_0$ evaluated at $\grad G_0(u,v)$,
+gives
+\begin{equation}\label{eq:model-dets}
+ \det\Hess G_0=-\frac{3D}{4uv^6},\qquad
+ \det\Hess K_0=-\frac{160u^2v^{10}E}{27D^3}.
+\end{equation}
+These quantities are nonzero. The two pure second derivatives of $G_0$
+could vanish simultaneously only if $av=3bu$ and $av=-3bu$, which is
+impossible on the parameter set.
+
+The pure second derivatives of $K_0$ have quartic homogeneous numerators,
+and the pure third derivatives of $\Psi_0$ have degree-nine homogeneous
+numerators. Appendix~\ref{app:model} gives the full polynomials, the
+derivative identities producing them, and exact B\'ezout certificates
+showing that each pair has no common direction zero. The direction $a=0$
+is checked separately there. For \eqref{eq:pure-four-five-model},
+the same appendix gives the degree-fourteen and degree-nineteen numerators
+$Q_{14}$ and $Q_{19}$, their B\'ezout identity modulo $101$, and the
+missing projective direction. This proves all the required noncoincidences.
+Continuity and compactness give uniform positive lower bounds. All
+normalized upper derivative bounds on buffered inverse charts follow
+from the same determinant bounds and smoothness.
+\end{proof}
+
+\subsection{The exact family}
+For small $e_0\ge0$, define
+\begin{equation}\label{eq:Fe}
+ \mathcal F_{e_0}(u,v)=\frac{u^{3/2}}v
+       \left(\frac3{c^2+c+1}\right)^{3/2},
+ \qquad c=(1+e_0u/v)^{1/3}.
+\end{equation}
+If $\omega=(\omega_1,\omega_2)$ is a unit vector and $\beta>0$ is small, put
+\begin{equation}\label{eq:Gexact}
+ G_{e_0,\beta,\omega}(u,v)
+ =\frac{\mathcal F_{e_0}(u+\beta\omega_1,v+\beta\omega_2)
+              -\mathcal F_{e_0}(u,v)}{\beta}.
+\end{equation}
+The continuous extension at $\beta=0$ is understood only for derivative
+comparison. By the integral representation of a difference quotient,
+\begin{equation}\label{eq:G-close}
+ \norm{G_{e_0,\beta,\omega}-G_0}_{C^k}\ll e_0+\beta,
+ \qquad a=\tfrac32\omega_1,\quad b=-\omega_2,
+\end{equation}
+for every fixed $k$, on a slightly enlarged positive compact set. Indeed
+$\mathcal F_0=u^{3/2}/v$, and its directional derivative is precisely
+\eqref{eq:G0}. The direction parameters form a fixed ellipse separated
+from the origin. The constants in \eqref{eq:G-close} include the axis
+directions. The radical family has uniformly bounded derivatives of every
+fixed order in this neighborhood.
+
+\begin{lemma}[Compatible inverse charts for the second difference]
+\label{lem:transfer}
+Let $G=G_{e_0,\beta,\omega}$, with $\omega$ a unit vector, and put
+$\Phi=\Leg G$ using the branches specified below. There are a uniformly
+bounded number of source charts and common exact/model inverse rectangles
+$Q^-\Subset Q^\circ\Subset Q^+$, with uniform positive buffers, such
+that on the common outer rectangles
+\[
+ \norm{\Phi-\Phi_0}_{C^{13}(Q^+)}\ll e_0+\beta.
+\]
+Every first-B domain, including both Abel cuts, belongs to its designated
+$Q^-$ in normalized coordinates. There is a fixed $c_0>0$ such that for
+$0<\lambda\le c_0$ the phase
+\begin{equation}\label{eq:Phi-lambda}
+ \Phi_\lambda(p,q)
+ =\frac{\Phi(p+\lambda,q)-\Phi(p,q)}\lambda
+ =\int_0^1\Phi_p(p+t\lambda,q)\dd t
+\end{equation}
+is defined on a neighborhood of $\overline{Q^\circ}$ and satisfies
+\begin{equation}\label{eq:Phi-lambda-close}
+ \norm{\Phi_\lambda-K_0}_{C^9(Q^\circ)}
+ \ll e_0+\beta+\lambda,
+ \qquad K_0=\Phi_{0,p}.
+\end{equation}
+Its Hessian determinant and pure second maximum are uniformly nonzero
+for sufficiently small fixed upper bounds on $e_0,\beta,\lambda$.
+There is a further uniformly bounded chart cover of $\overline{Q^-}$
+with common buffered inverse rectangles for
+$\grad\Phi_\lambda$ and $\grad K_0$. On each such rectangle, the specified
+terminal Legendre functions obey
+\[
+ \norm{\Psi-\Psi_0}_{C^5}\ll e_0+\beta+\lambda,
+ \qquad \Psi=\Leg\Phi_\lambda,\quad\Psi_0=\Leg K_0,
+ \qquad \max(|\Psi_{2222}|,|\Psi_{22222}|)\ge c>0.
+\]
+On their respective buffered environments one also has
+\begin{equation}\label{eq:uniform-high-regularity}
+ \norm{G}_{C^{24}}+\norm{\Phi}_{C^{22}}
+       +\norm{\Phi_\lambda}_{C^{21}}+\norm{\Psi}_{C^{20}}\le C.
+\end{equation}
+All constants and chart counts are independent of the small nonzero
+steps and of $\omega$, including its axis directions. The sharp domain
+and every cut endpoint are independent free parameters in these assertions.
+\end{lemma}
+\begin{proof}
+Choose nested positive source rectangles in advance, with enough room
+for the translations in \eqref{eq:Gexact}. The model parameters
+$(a,b)=(3\omega_1/2,-\omega_2)$ range over a compact ellipse separated
+from zero. Lemma~\ref{lem:model} supplies uniform determinant and pivot
+margins on these rectangles. Also \eqref{eq:G-close} gives $C^{17}$
+closeness of $G$ to $G_0$.
+
+We first justify all upper regularity needed for the inverse estimates.
+Formula \eqref{eq:Fe}, with its positive radical branches, has a uniformly
+bounded $C^{25}$ norm on the larger positive rectangle. The identity
+\[
+ G(z)=\int_0^1\omega\cdot\grad\mathcal F_{e_0}
+                    (z+t\beta\omega)\dd t
+\]
+gives a uniform $C^{24}$ bound for $G$. It also proves all the stated
+comparison bounds without dividing an error by $\beta$. Decrease the
+fixed upper bounds on $e_0,\beta$ to preserve the model Hessian margins.
+
+Apply Lemma~\ref{lem:buffered-inverses} to $F_0=G_0$ and $F=G$.
+The common mixed rectangles and gradient rectangles are chosen by that
+lemma, with centers given by the model maps. They are the rectangles to
+be used in the first B application: Lemma~\ref{lem:sharpB} uses their
+source charts, and \eqref{eq:domain-provenance} places every resulting
+normalized dual domain inside its $Q^-$. Further subdivisions, if any,
+use restrictions of these branches; uniqueness on the original source
+ball ensures agreement. Formula \eqref{eq:inverse-stability} with
+$k=13$ proves the $C^{13}$ comparison from the available $C^{17}$ bound.
+The gradient inverse $I=(\grad G)^{-1}$ has a uniform $C^{23}$ bound,
+because differentiating $\grad G(I(y))=y$ to order $r\le23$ uses
+derivatives of $G$ of order at most $r+1\le24$ and the uniformly bounded
+inverse Hessian. Hence $\Phi=G\circ I-y\cdot I$ has, in particular,
+a uniform $C^{22}$ bound on a neighborhood of $\overline{Q^+}$.
+
+Here is the buffer and branch argument for the next A operation. Reserve
+an intermediate rectangle $Q^\circ$ whose distance from $Q^-$ and from
+the complement of $Q^+$ is at least a fixed $b_1>0$. Choose
+$c_0<b_1/4$, and decrease it later if necessary. Then
+\begin{equation}\label{eq:translation-buffer}
+ \overline{Q^\circ}+[0,c_0]e_1\Subset Q^+.
+\end{equation}
+The ordered partition \eqref{eq:chart-partition} and the triangle
+inequality are applied before A. For a single branch contribution with
+normalized domain $E\subset Q^-$, a positive normalized shift
+$\lambda e_1$ has correlation domain
+\begin{equation}\label{eq:normalized-correlation-domain}
+ E_\lambda=E\cap(E-\lambda e_1).
+\end{equation}
+Both endpoint phase values are evaluations of this same $\Phi$.
+For $y\in E_\lambda$, the segment $y+[0,\lambda]e_1$ lies in the
+convex rectangle $Q^-$, even if it leaves $E$. Formula
+\eqref{eq:translation-buffer} additionally defines the same difference
+quotient on a full neighborhood of $\overline{Q^\circ}$, without any
+assumption that $E$ is connected or has interior. Thus no continuation
+through a domain boundary or onto a different inverse branch is used.
+
+For every spatial multi-index $|\alpha|\le9$, subtract $K_0$ in the
+integral formula to obtain
+\begin{align*}
+ \partial^\alpha(\Phi_\lambda-K_0)(y)
+ &=\int_0^1\partial^\alpha(\Phi_p-\Phi_{0,p})
+                           (y+t\lambda e_1)\dd t\\
+ &\quad+\int_0^1\bigl[\partial^\alpha\Phi_{0,p}
+               (y+t\lambda e_1)-\partial^\alpha\Phi_{0,p}(y)\bigr]\dd t.
+\end{align*}
+The first integral is $O(e_0+\beta)$ by the $C^{13}$ comparison; the
+second is $O(\lambda)$ by the uniform next derivative of $\Phi_0$.
+This proves \eqref{eq:Phi-lambda-close}, with no
+$(e_0+\beta)/\lambda$ loss. For $|\alpha|\le21$ the same formula,
+without subtraction, and the $C^{22}$ bound of $\Phi$ give the uniform
+$C^{21}$ bound for $\Phi_\lambda$ on $Q^\circ$.
+
+Every point of $Q^\circ$ belongs to the chosen model inverse environment
+of $G_0$, with its inverse in a fixed positive compact source set.
+Lemma~\ref{lem:model} therefore supplies uniform determinant and pure
+second margins for $K_0$ on a neighborhood of $\overline{Q^\circ}$.
+They transfer to $\Phi_\lambda$ by its $C^9$ comparison, after decreasing
+the three small upper bounds. Apply Lemma~\ref{lem:buffered-inverses}
+again, now on $\overline{Q^-}$ with ambient domain $Q^\circ$, to
+$F_0=K_0$, $F=\Phi_\lambda$. The number of source centers and their
+buffers are uniform: apply the geometric construction after translating
+the first-stage rectangles to fixed rectangles, and translate the source
+charts back. Their side lengths and buffers are fixed, so a fixed finite
+grid of offsets from the model centers suffices. Every resulting inverse
+identity and phase is then written in the original $(p,q)$ coordinates.
+These second-stage source charts are used in the second B
+application, again with an ordered partition before estimating any sums.
+
+On the common terminal rectangles, \eqref{eq:inverse-stability} with
+$k=5$ and the $C^9$ comparison prove the stated $C^5$ closeness of
+$\Psi$ and $\Psi_0$. The model fourth/fifth lower bound holds on these
+whole compact inverse environments by Lemma~\ref{lem:model}. Choose
+$e_0,\beta,c_0$ so that the two derivative errors are each less than
+half its fixed margin; the same-coordinate maximum for $\Psi$ follows.
+The derivative budget $C^{17}\to C^{13}\to C^9\to C^5$ thus has spare
+derivatives at both inverse steps. Finally the $C^{21}$ bound on
+$\Phi_\lambda$ and its determinant margin give a $C^{20}$ bound on
+its gradient inverse. Its Legendre formula gives the required $C^{20}$
+bound on $\Psi$. This proves \eqref{eq:uniform-high-regularity}.
+
+For either $\mathcal H=G$ or $\mathcal H=\Phi_\lambda$, restoring the
+physical scales consequently gives
+\begin{equation}\label{eq:physical-derivative-bounds}
+ \left|\partial_s^i\partial_t^j
+       \bigl[P\mathcal H(s/U,t/V)\bigr]\right|
+ \le C P U^{-i}V^{-j},\qquad i+j\le20.
+\end{equation}
+Thus both B applications in Proposition~\ref{prop:L5} have the required
+upper bounds with constants independent of scale and aspect ratio.
+The uniform semialgebraic assertions for these exact branches and all
+subsequent sharp restrictions are verified separately in the next lemma.
+\end{proof}
+
+\begin{lemma}[Complexity transfer for the exact phase construction]
+\label{lem:exact-complexity}
+Fix the initial sharp-domain format and the finitely many derivative
+orders and operations used in this proof. The exact families
+$\mathcal F_{e_0},G,\Phi,\Phi_\lambda,\Psi$, their spatial derivatives
+up to every specified order, all mixed and gradient inverse branches in
+Lemma~\ref{lem:transfer}, and all transformed domains in
+Lemma~\ref{lem:sharpB} have uniformly bounded semialgebraic format.
+The assertion is joint in the parameters, including $e_0,\beta,\omega$,
+$\lambda$, positive physical scales, real rectangle endpoints and
+derivative thresholds. It remains uniform as $\beta$ or $\lambda$ tends
+to zero through positive values. Their derivative extensions at zero
+can be included as separate pieces.
+
+In particular the A correlations, the original stationary restrictions,
+and every individual terminal derivative layer have uniformly bounded
+numbers of intervals and points in each coordinate fiber. No parameter
+lower bound depending on $x$ is required for this complexity assertion.
+\end{lemma}
+\begin{proof}
+An explicit graph description starts the construction. For $u,v>0$,
+the equality $w=\mathcal F_{e_0}(u,v)$ is equivalent to the existence
+of $r,c,t>0$ satisfying
+\begin{equation}\label{eq:radical-graph}
+ r^2=u,\qquad vc^3=v+e_0u,\qquad
+ t^2(c^2+c+1)^3=27,\qquad vw=urt.
+\end{equation}
+Positivity selects every radical branch uniquely. These are fixed-degree
+polynomial equations. The shifts add the polynomial relations
+$u'=u+\beta\omega_1$, $v'=v+\beta\omega_2$ and
+$\omega_1^2+\omega_2^2=1$. If $w_0,w_1$ are the two values from
+\eqref{eq:radical-graph}, the graph of $G$ for $\beta>0$ adds
+$\beta w=w_1-w_0$. At $\beta=0$ it is the directional derivative
+$\omega\cdot\grad\mathcal F_{e_0}$, whose graph is supplied by
+Lemma~\ref{lem:sa-calculus}. This proves uniform format without any
+coefficient bound involving $1/\beta$.
+
+Spatial derivative graphs of $G$ are obtained from that same lemma.
+For a specified source ball $B_j$, the graph of its gradient inverse
+is given by
+\[
+ z\in B_j,\qquad (p,q)=\grad G(z).
+\]
+Lemma~\ref{lem:buffered-inverses} proves uniqueness on the whole
+buffered target rectangle. Adjoining the graph value $w=G(z)$ and the
+polynomial relation $v=w-pz_1-qz_2$ gives the graph of $\Phi$.
+The mixed inverse is handled by $p=G_1(z)$ and $q=z_2$, or by the
+specified second pivot. All target rectangles have model graph values
+as centers and fixed radii, and the pivot selection uses a fixed
+derivative inequality. They therefore have bounded format as well.
+
+For $\lambda>0$, the graph of $\Phi_\lambda$ uses two values $v_0,v_1$
+of this same selected $\Phi$ and the equation $\lambda w=v_1-v_0$.
+At zero use $w=\Phi_p$. Repeating the derivative-graph and specified
+inverse-graph constructions gives the terminal inverse and $\Psi$.
+The integrals in Lemma~\ref{lem:transfer} prove analytic norm estimates;
+the graph argument here uses only the finite difference formulas.
+Thus it does not require an assertion that integration preserves
+semialgebraicity.
+
+For domains, an A correlation is the single formula
+$z\in D$, $z+r\in D$. Physical rescaling uses polynomial graph
+relations such as $s=Uz_1$, $\xi U=Pp$, with positive scales; it does
+not increase degrees as the scales vary. The two B transformations
+use exactly the finitely many operations in
+\eqref{eq:sharp-domain-family}, with every rectangle endpoint retained
+as a free parameter. The initial stationary expressions
+\eqref{eq:mnu}--\eqref{eq:wnu} are also compositions of rational
+operations and positive radicals of fixed degrees, on their stated
+positive frequency range. Their domain restrictions therefore fit the
+same calculus. None of these steps inserts arithmetic support into a
+real domain.
+
+Finally, for example, a derivative layer is described by adjoining a
+graph variable $w=\Psi_{2222}(y)$ and the inequalities
+$\delta/2\le|w|\le\delta$, and projecting out $w$. Any fifth-derivative
+or sign restriction uses the same rule. The number of dyadic levels
+may grow, but each level is one member of this fixed family with free
+parameter $\delta$; no growing union is used to obtain a component
+bound. There is a fixed number of graph, projection and Boolean
+operations along each construction path, and every derivative order is
+fixed. Lemma~\ref{lem:sa-calculus} supplies a single resulting format
+bound, followed by a single fiber-component bound. It includes coincident
+endpoints, vanishing polynomial coefficients and the axis directions
+of $\omega$. This proves all the assertions.
+\end{proof}
+
+\begin{remark}\label{rem:labels}
+The frequencies retain their original labels: $p=G_u$, $q=G_v$.
+Exchanging the order of the two B transforms changes only the order of
+calculation. The next A shift always acts on $p$, so its limiting phase is
+$\Phi_{0,p}=-u$. Replacing it by $\Phi_{0,q}$ would require a different
+derivative calculation. The actual oscillating phase is never replaced by
+its model in the sum; derivative closeness is the only approximation used.
+\end{remark}
+
+\section{Two seven-term local estimates}
+\label{sec:local}
+
+\begin{lemma}[Fourth-derivative sublevel decomposition]\label{lem:sublevel-fourth}
+Let $\phi$ belong to a uniformly $C^5$-bounded semialgebraic family of
+bounded description complexity on a fixed interval of length $O(1)$, and
+suppose that
+\[
+ \max\bigl(|\phi^{(4)}(t)|,|\phi^{(5)}(t)|\bigr)\ge c>0.
+\]
+For $L\ge1$, $P>0$ and every interval restriction $I$ within that interval,
+\begin{equation}\label{eq:sublevel-fourth}
+ \left|\sum_{n:\,n/L\in I}e\bigl(P\phi(n/L)\bigr)\right|
+ \ll 1+L^{5/7}P^{1/14}+L^{29/28}P^{-1/14}.
+\end{equation}
+The estimate also holds on a union of a bounded number of intervals and
+points. Constants are uniform in the family and in all real endpoints.
+\end{lemma}
+\begin{proof}
+The case $L=O(1)$ is trivial. On $|\phi^{(4)}|\ge c/2$, split into its
+bounded number of interval components and use \eqref{eq:fourth-test}
+with ambient length $L$ and $\lambda\asymp P/L^4$. Isolated points in
+this part contribute $O(1)$.
+
+On the remaining set, $|\phi^{(5)}|\ge c$. Decompose it into dyadic
+layers
+\[
+ \delta<|\phi^{(4)}|\le2\delta,\qquad
+ L^{-1}\lesssim\delta\lesssim1,
+\]
+and a final set $|\phi^{(4)}|\lesssim L^{-1}$. Each layer has a uniformly
+bounded number of interval and point components. On each interval the
+fifth derivative has constant sign. The mean value theorem therefore
+bounds its normalized length by $O(\delta)$. In the physical variable,
+the available interval length and the fourth derivative size satisfy
+\[
+ M\ll\delta L,\qquad \lambda\asymp P\delta/L^4.
+\]
+Here $\delta L\gtrsim1$, so a suitable fixed multiple of $\delta L$
+also bounds the number of integer points. Applying \eqref{eq:fourth-test}
+gives
+\begin{equation}\label{eq:sublevel-layer}
+ \delta^{15/14}L^{5/7}P^{1/14}
+ +\delta^{19/28}L^{29/28}P^{-1/14}.
+\end{equation}
+Both powers of $\delta$ are positive, and the dyadic sums converge.
+Isolated points in such a layer can be included in the same bound:
+the sum of the two terms in the fourth-derivative estimate is at least
+$2M^{7/8}$ for $M\ge1$, by the arithmetic--geometric mean inequality.
+
+Each component of the final set has normalized length $O(L^{-1})$,
+again by $|\phi^{(5)}|\ge c$ and the mean value theorem. It contributes
+$O(1)$ points, and there are $O(1)$ components. Semialgebraic finiteness
+provides all the component bounds uniformly, also after intersecting
+with $I$. This proves \eqref{eq:sublevel-fourth}.
+\end{proof}
+
+\begin{proposition}\label{prop:L5}
+Let $1\le H\le X$, let $e_0=H/X$ be sufficiently small, and let $\beta>0$
+be sufficiently small. Let $D$ be a permitted sharp domain in an $H$ by $X$
+box whose normalized coordinates lie in the fixed positive compact set.
+For $Z>0$ put
+\[
+ S_5=\sum_{(h,n)\in D\cap\Z^2}
+       e\bigl(ZG_{e_0,\beta,\omega}(h/H,n/X)\bigr).
+\]
+Uniformly over unit directions $\omega$, domains and sharp endpoints,
+both of the following estimates hold:
+\begin{align}
+ |S_5|\ll x^\eta\bigl(&Z^{13/25}H^{1/2}X^{1/5}
+       +Z^{89/200}H^{1/2}X^{13/40}+\sqrt{XZ}\notag\\
+       &+Z^{6/25}H^{1/2}X^{2/5}
+       +ZH^{-1/4}+X+HX/\sqrt Z\bigr),\label{eq:L5}\\
+ |S_5|\ll x^\eta\bigl(&Z^{13/25}H^{21/50}X^{7/25}
+       +Z^{89/200}H^{101/175}X^{347/1400}+\sqrt{XZ}\notag\\
+       &+Z^{6/25}H^{27/50}X^{9/25}
+       +ZH^{-1/4}+X+HX/\sqrt Z\bigr).\label{eq:L5safe}
+\end{align}
+We call these the long-direction and conservative bounds, respectively.
+The scales have at most polynomial size in $x$; equivalently one may
+retain the fixed logarithmic losses in the proof.
+
+For later reference, their powers $(a_j^\star,b_j^\star,d_j^\star)$ in
+$Z^{a_j^\star}H^{b_j^\star}X^{d_j^\star}$ are
+\begin{equation}\label{eq:local-powers}
+\begin{array}{c|rrr|rrr}
+ &\multicolumn{3}{c|}{\star=\mathrm L}
+ &\multicolumn{3}{c}{\star=\mathrm S}\\
+ j&a_j^{\mathrm L}&b_j^{\mathrm L}&d_j^{\mathrm L}
+  &a_j^{\mathrm S}&b_j^{\mathrm S}&d_j^{\mathrm S}\\ \hline
+ 1&13/25&1/2&1/5&13/25&21/50&7/25\\
+ 2&89/200&1/2&13/40&89/200&101/175&347/1400\\
+ 3&1/2&0&1/2&1/2&0&1/2\\
+ 4&6/25&1/2&2/5&6/25&27/50&9/25\\
+ 5&1&-1/4&0&1&-1/4&0\\
+ 6&0&0&1&0&0&1\\
+ 7&-1/2&1&1&-1/2&1&1
+\end{array}.
+\end{equation}
+\end{proposition}
+\begin{proof}
+If $Z<1$, the last term bounds the trivial $O(HX)$ count. If $1\le Z<X$,
+Lemma~\ref{lem:sharpB} and \eqref{eq:trivial-dual}, with lengths $H,X$,
+give the trivial dual main term $Z+H+X+HX/Z$. Together with
+$\mathcal R(H,X,Z)$, this is bounded by
+\[
+ (X+\sqrt{XZ}+HX/\sqrt Z)\log(2+H+X+Z).
+\]
+This treats every short initial dual range.
+
+Suppose $Z\ge X$, and set
+\begin{equation}\label{eq:UVW}
+ U=Z/H,\qquad V=Z/X,\qquad W=HX/Z,\qquad U\ge V\ge1.
+\end{equation}
+The first two-dimensional B inequality gives $W$ times a maximal dual sum
+$S_6$, plus $\mathcal R(H,X,Z)$. Fix one chart and one actual dual domain
+$E$ before applying A. Its exact phase is $Z\Phi(k/U,l/V)$, with the
+frequency labels of Remark~\ref{rem:labels}. A positive integer shift
+$\tau$ in the first coordinate has exact correlation phase
+\[
+ Z\bigl(\Phi((k+\tau)/U,l/V)-\Phi(k/U,l/V)\bigr)
+ =P\Phi_\lambda(k/U,l/V),\quad
+ P=H\tau,\quad\lambda=\tau/U.
+\]
+Lemma~\ref{lem:transfer} applies when $\lambda\le c_0$.
+
+Let $T(\tau)$ denote this unweighted correlation sum. Apply the sharp B
+inequality again, with lengths $U,V$ and parameter $P$. If $P\ge U$,
+both terminal dual lengths
+\[
+ R_1=P/U,\qquad R_2=P/V,\qquad R_1\le R_2
+\]
+are at least one. The exact terminal phase is
+$P\Psi(\xi/R_1,\zeta/R_2)$, where $\Psi=\Leg\Phi_\lambda$.
+For each fixed first coordinate, the $C^5$ bounds and the
+same-coordinate fourth/fifth derivative condition in
+Lemma~\ref{lem:transfer} permit Lemma~\ref{lem:sublevel-fourth} along
+the second coordinate. Lemma~\ref{lem:exact-complexity} gives a uniform component bound for every
+actual terminal fiber and every derivative layer. Consequently its sum is bounded by
+\[
+ 1+R_2^{5/7}P^{1/14}+R_2^{29/28}P^{-1/14}.
+\]
+Counting the $O(R_1)$ first-coordinate frequencies and multiplying by
+$UV/P$ gives
+\[
+ V+P^{15/14}R_2^{-2/7}+P^{13/14}R_2^{1/28}
+ =V+P^{11/14}V^{2/7}+P^{27/28}V^{-1/28}.
+\]
+The $V$ term is already included in $\mathcal R(U,V,P)$.
+All derivative-level restrictions occur after the last B transform.
+They only truncate the actual terminal fibers. Smooth amplitudes have
+already been removed by rectangular Abel summation, so no derivatives
+of the layer endpoints or additional stationary boundary errors arise.
+
+If $P<U$, use the complete trivial dual expression
+$P+U+V+UV/P$. Since $P\le U$, it is covered by $\mathcal R(U,V,P)$.
+Thus in every terminal range,
+\begin{equation}\label{eq:terminal}
+ |T(\tau)|\ll x^\eta\left(
+ P^{11/14}V^{2/7}+P^{27/28}V^{-1/28}
+ +\mathcal R(U,V,P)\right).
+\end{equation}
+As $V\le U$, this also holds if the first $V^{2/7}$ is enlarged to
+$U^{2/7}$. This gives the conservative alternative without imposing
+any additional derivative hypothesis.
+
+Choose $\star\in\{\mathrm L,\mathrm S\}$, put
+$B_{\mathrm L}=V$, $B_{\mathrm S}=U$, and apply the one-axis version of
+Lemma~\ref{lem:A} with
+\begin{align}
+ Q_{0,\mathrm L}&=Z^{24/25}H^{-1}X^{-2/5},&
+ Q_{0,\mathrm S}&=Z^{24/25}H^{-21/25}X^{-14/25},\notag\\
+ Q&=\max\{1,\lfloor\min(Q_{0,\star},c_0U)\rfloor\}.
+ \label{eq:Q-choice}
+\end{align}
+Extend $T(\tau)$ to negative shifts by its sharp-domain correlation
+definition. Translating the summation variable gives
+$T(-\tau)=\overline{T(\tau)}$, so both signs cost only a factor of two.
+For $Q\ge2$, every $1\le\tau<Q$ satisfies $\tau/U<c_0$.
+Average positive powers of $\tau$ using $Q$ and bound negative powers
+conservatively by $\tau\ge1$. Then \eqref{eq:terminal} yields
+\begin{align}
+ |S_6|^2\ll x^\eta\biggl\{\frac{(UV)^2}{Q}
+ +UV\biggl(& (HQ)^{11/14}B_\star^{2/7}
+       +(HQ)^{27/28}V^{-1/28}+U+V\notag\\
+       &+\sqrt{HQ}+\frac{UV}{\sqrt H}+\frac{UV}{H}
+       \biggr)\biggr\}.\label{eq:S6-square}
+\end{align}
+When $Q=1$, there are no correlations and $|S_6|\ll UV$ suffices.
+In either branch,
+\begin{equation}\label{eq:Q-diagonal}
+ \frac Z{\sqrt Q}\ll\frac Z{\sqrt{Q_{0,\star}}}+\sqrt{HZ}
+ \le\frac Z{\sqrt{Q_{0,\star}}}+\sqrt{XZ}.
+\end{equation}
+For $Q\ge2$, use comparability of the floor to the minimum. For $Q=1$,
+either $Q_{0,\star}<2$ or $c_0U<2$, and one of the right-hand terms
+bounds $Z$.
+
+Since $W\sqrt{UV}=\sqrt{HX}$, the diagonal contributes $Z/\sqrt Q$.
+The first off-diagonal term contributes, respectively,
+\begin{align*}
+ A_{\mathrm L}&=Z^{1/7}H^{25/28}X^{5/14}Q^{11/28},\\
+ A_{\mathrm S}&=Z^{1/7}H^{3/4}X^{1/2}Q^{11/28}.
+\end{align*}
+The remaining off-diagonal contributions are common to both choices:
+\[
+ Z^{-1/56}H^{55/56}X^{29/56}Q^{27/56},\quad
+ \sqrt{XZ},\quad\sqrt{HZ},\quad
+ H^{3/4}X^{1/2}Q^{1/4},\quad
+ ZH^{-1/4},\quad ZH^{-1/2}.
+\]
+In the $Q\ge2$ branch only, replace nonnegative powers of $Q$ by
+the corresponding powers of $Q_{0,\star}$. The choice
+$Q_{0,\star}$ balances the diagonal with $A_\star$ and gives the first
+term of the corresponding bound. The next contributions give the
+second, third and fourth terms. Since $H\ge1$, $ZH^{-1/2}$ is covered
+by $ZH^{-1/4}$. Finally, for $Z\ge X\ge H\ge1$,
+\[
+ \mathcal R(H,X,Z)\ll
+ (HX/\sqrt Z+X+\sqrt{XZ})\log(2+H+X+Z).
+\]
+For $Q=1$, use only \eqref{eq:Q-diagonal}; no off-diagonal bound is
+needed. This proves both \eqref{eq:L5} and \eqref{eq:L5safe} for every
+$Z>0$ and every allowed sharp restriction.
+\end{proof}
+
+\section{The original divisor sum and the Case A reduction}
+\label{sec:reduction}
+Choose $Y=\lfloor x^\rho\rfloor$ in \eqref{eq:voronoi}. Partition each of
+the three factors of $n$ into dyadic intervals $[2^j,2^{j+1})$, $j\ge0$.
+In a fixed factor box, designate the largest scale by $X$, breaking ties
+by a fixed index order, and call the other scales $A,B$. Put
+\[
+ M=AB,\qquad N=ABX=MX.
+\]
+Every nonempty cutoff box has
+\begin{equation}\label{eq:box-range}
+ N\le Y,\qquad N^{1/3}\le X\le N,
+ \qquad N\le abn<8N.
+\end{equation}
+Define
+\[
+ a_m=\#\{(a,b)\in I_A\times I_B:ab=m\},
+ \qquad a_m\le d(m),\qquad \sum_{m\in I_M}|a_m|^2\ll Mx^\eta,
+\]
+where $I_M$ is the full ambient product interval, of length $O(M)$.
+No pointwise ordering of the factors is imposed.
+
+One-dimensional Abel summation in the product removes its weight
+$n^{-2/3}$ at cost $O(N^{-2/3})$: the normalized weight has bounded
+variation on $[N,8N)$. Thus it suffices to prove, uniformly in real product
+cutoffs $Y_1,Y_2$, that
+\begin{align}
+ S_1&=\sum_{m\in I_M}a_m
+       \sum_{\substack{n\in I_X\\Y_1<mn\le Y_2}}
+             e\bigl((Rmn)^{1/3}\bigr),\label{eq:S1}\\
+ x^{1/3}N^{-2/3}|S_1|&\ll x^{\theta+\eta}.
+       \label{eq:box-target}
+\end{align}
+The physical scale is \eqref{eq:F-convention}. The number of factor boxes
+is $O(\log^3x)$. Boxes with $N\le x^{u_0}$ are trivial; their contribution
+is included explicitly in Section~\ref{sec:assembly}.
+
+\subsection{Cauchy and the signed first A}
+For the moment let $1\le q\ll X$ be an integer. Set
+\[
+ z_m(n)=1_D(m,n)e\bigl((Rmn)^{1/3}\bigr),\qquad
+ D=\{(m,n)\in I_M\times I_X:Y_1<mn\le Y_2\},
+\]
+with zero extension in $n$. Cauchy gives
+\begin{equation}\label{eq:full-Cauchy}
+ |S_1|^2\le\left(\sum_{m\in I_M}|a_m|^2\right)
+        \sum_{m\in I_M}\left|\sum_n z_m(n)\right|^2.
+\end{equation}
+The second sum runs over the full $m$ interval, including $a_m=0$.
+Restricting it to the arithmetic support of $a_m$ would not justify the
+next B transform.
+
+There is a common interval of $K_q\ll X+q$ integer points containing the
+support of $\sum_{r=1}^q z_m(n+r)$ for every $m$. Define
+\[
+ C_m(h)=\sum_n z_m(n+h)\overline{z_m(n)},\qquad
+ C(h)=\sum_{m\in I_M}C_m(h).
+\]
+The exact shift identity and expansion of its squared norm give
+\begin{equation}\label{eq:signed-A}
+ |S_1|^2\le
+ \left(\sum_{m\in I_M}|a_m|^2\right)\frac{K_q}{q}
+ \left[C(0)+2\Re\sum_{1\le h<q}(1-h/q)C(h)\right].
+\end{equation}
+The bracket is nonnegative, being a sum of squared norms divided by $q$.
+Moreover $C(0)\ll N$. On each dyadic interval $I_H=[H,2H)$, the endpoint
+size plus variation of $1-h/q$ on $I_H\cap[1,q)$ is at most two. Abel
+summation in $h$ therefore gives
+\begin{equation}\label{eq:A0}
+ |S_1|^2\ll x^\eta\left(\frac{N^2}{q}
+             +\frac Nq\sum_{\substack{H\ \mathrm{dyadic}\\H\le q}}S_2(H)\right),
+\end{equation}
+where
+\[
+ S_2(H)=\sup_{J\subset I_H\cap[1,q)}
+            \left|\sum_{h\in J}C(h)\right|,
+\]
+and $J$ ranges over real intervals. It is essential that the joint signed
+$h$ sum is kept until this point; there is no extra factor $H$ from
+removing the triangular weight. If $q=1$, the correlation sum is empty.
+
+\subsection{The first stationary phase, with its exact weight}
+Fix $h\asymp H>0$ and $n\asymp X$, and set
+\begin{equation}\label{eq:T-L}
+ d_h(n)=(n+h)^{1/3}-n^{1/3}>0,
+ \quad T=FH/X,\quad L=T/M=FH/N,\quad \mathcal A=M/\sqrt T.
+\end{equation}
+For each such pair, the $m$ phase and domain are
+\[
+ g(m)=R^{1/3}d_h(n)m^{1/3},
+\]
+\[
+ I_M\cap(Y_1/n,Y_2/n]\cap(Y_1/(n+h),Y_2/(n+h)],
+ \qquad n,n+h\in I_X.
+\]
+The domain is an interval without an arithmetic restriction. The curvature
+has size $T/M^2$ and the next two derivatives obey the B hypotheses.
+
+The stationary point, phase and weight are exactly
+\begin{align}
+ m_\nu&=\frac{\sqrt R\,d_h(n)^{3/2}}{(3\nu)^{3/2}},
+       \label{eq:mnu}\\
+ f_\nu(h,n)&=g(m_\nu)-\nu m_\nu
+     =\frac{2\sqrt R}{3\sqrt{3\nu}}d_h(n)^{3/2},
+       \label{eq:fnu}\\
+ g''(m_\nu)&=-\frac{2\nu}{3m_\nu},\qquad
+ w_\nu=\frac{R^{1/4}d_h(n)^{3/4}}
+                  {\sqrt2\,3^{1/4}\nu^{5/4}}.
+       \label{eq:wnu}
+\end{align}
+The Maslov factor is the constant $e(-1/8)$. Every stationary frequency
+is a positive integer with $cL\le\nu\le CL$, for fixed $c,C>0$.
+Either no integer frequency occurs, or $L\ge1/C$ and the number of
+frequencies is $O(L)$. This is why a separate $+1$ in the frequency count
+causes no loss; the zero frequency is absent.
+
+Original endpoint changes and isolated fibers cost $O(1)$ per $(h,n)$;
+dual endpoint conventions cost $O(\mathcal A)$ per pair. Charge them
+before grouping by $\nu$. Together with the B error this gives
+\begin{equation}\label{eq:Err0}
+ E_0\ll \bigl(HX+N\sqrt{HX/F}\bigr)\log x.
+\end{equation}
+Thus an endpoint half-weight never becomes a discontinuous coefficient
+to which smooth Abel summation is applied.
+
+For explicit normalization, write $h=Hu$, $n=Xv$, $\nu=L\ell$, and put
+\[
+ e_0=H/X,\qquad c_e=(1+e_0u/v)^{1/3},\qquad
+ \kappa_e=\frac3{c_e^2+c_e+1}.
+\]
+Then
+\begin{align}
+ d_h(n)&=\frac{H}{3X^{2/3}}u v^{-2/3}\kappa_e,\notag\\
+ f_\nu(h,n)&=\frac2{27}T\ell^{-1/2}\mathcal F_{e_0}(u,v)
+            =T_\nu\mathcal F_{e_0}(u,v),\label{eq:normalized-firstB}\\
+ T_\nu&=\frac{2\sqrt R H^{3/2}}{27\sqrt\nu X}\asymp FH/X,\notag\\
+ w_\nu&=\frac{\mathcal A}{3\sqrt2}
+       \ell^{-5/4}u^{3/4}v^{-1/2}\kappa_e^{3/4}.\notag
+\end{align}
+Since $\ell$ stays in a fixed positive compact interval, $w_\nu/\mathcal A$
+has uniformly bounded normalized $C^2$ norm on a larger positive rectangle,
+before imposing any stationary domain or product cutoff.
+
+For a fixed endpoint convention the stationary domain may be written as
+\begin{align*}
+ D_{\nu,J,Y}=\{(h,n):
+ &h\in J,\ n,n+h\in I_X,\ m_\nu\in I_M,\\
+ &Y_1<n m_\nu,\quad (n+h)m_\nu\le Y_2\}.
+\end{align*}
+It has bounded semialgebraic complexity. Lemma~\ref{lem:Abel} bounds its
+weighted sum by $\mathcal A\mathcal M_3(\nu)$, where
+\[
+ \mathcal M_3(\nu)=
+ \sup_{J,K_h,K_n}
+ \left|\sum_{D_{\nu,J,Y}\cap(K_h\times K_n)}e(f_\nu(h,n))\right|.
+\]
+All cuts are real intervals. The order of the maxima and frequency sums is
+\begin{align*}
+ S_2(H)&\le
+ \sup_J\sum_\nu\left|\sum_{D_{\nu,J,Y}}w_\nu e(f_\nu)\right|+E_0\\
+ &\le\sum_\nu\sup_J
+         \left|\sum_{D_{\nu,J,Y}}w_\nu e(f_\nu)\right|+E_0\\
+ &\ll\mathcal A\sum_{\nu\asymp L}\mathcal M_3(\nu)+E_0.
+\end{align*}
+Since $\mathcal A L=\sqrt T$, we obtain
+\begin{equation}\label{eq:A1}
+ S_2(H)\ll x^\eta\left(
+       \sqrt{FH/X}\sup_\nu\mathcal M_3(\nu)
+       +N\sqrt{HX/F}+HX\right).
+\end{equation}
+An empty frequency supremum contributes zero. Every $\nu$ may have its own
+maximizing rectangles. The bound is uniform in their endpoints, and no
+regularity of these endpoints as functions of $\nu$ is required.
+
+\subsection{The second A and the complete shift average}
+Fix one unweighted sum $S_3$ occurring in $\mathcal M_3(\nu)$. Apply
+Lemma~\ref{lem:A} with lengths $H,X$. In a full two-axis choice suppose
+\[
+ q_1\asymp\sqrt{\Pi H/X},\quad
+ q_2\asymp\sqrt{\Pi X/H},\quad
+ \pint=q_1q_2\asymp\Pi,\quad
+ \alpha=\sqrt{\Pi/(HX)}.
+\]
+In an axis choice take $q_1=1$, $q_2\asymp\Pi$ and $\alpha=\Pi/X$.
+The exact choices and all admissibility conditions are verified in
+Section~\ref{sec:caseA}.
+
+For each nonzero shift $r=(r_h,r_n)$, set
+\[
+ \beta=\sqrt{(r_h/H)^2+(r_n/X)^2},\qquad
+ \omega=\beta^{-1}(r_h/H,r_n/X),\qquad Z=T_\nu\beta.
+\]
+Its correlation is an unweighted sum over the exact
+$D_3\cap(D_3-r)$ with phase $ZG_{e_0,\beta,\omega}$. Consequently
+Proposition~\ref{prop:L5} applies once the smallness of the normalized
+shifts is established. No arbitrary coefficient extension of that
+proposition is needed.
+
+For every $a\ge0$, the average of $\beta^a$ is $O(\alpha^a)$. The
+negative-power average must also be kept. Direct summation gives
+\begin{align}
+ \frac1\pint\sum_{r_n\ne0}\beta^{-1/2}
+       &\ll\sqrt{X/q_2},\label{eq:negative-average}\\
+ \frac1\pint\sum_{\substack{r_n=0\\r_h\ne0}}\beta^{-1/2}
+       &\ll\frac{\sqrt{H/q_1}}{q_2}.\notag
+\end{align}
+Indeed use $\beta\ge |r_n|/X$ in the first sum and
+$\beta\ge |r_h|/H$ in the second, followed by
+$\sum_{j<q}j^{-1/2}\ll\sqrt q$. In the full case both contributions are
+$O(\alpha^{-1/2})$. If $q_1=1$, the second sum is empty; in the axis
+case the first alone gives the same result. Nonnegative powers follow
+from $\beta\ll\alpha$ and the $O(\pint)$ number of shifts.
+
+Choose either $\star=\mathrm L$ or $\star=\mathrm S$ uniformly for
+the fixed global parameters, before averaging the nonzero second shifts.
+Averaging the seven terms of \eqref{eq:L5} or \eqref{eq:L5safe} yields
+\begin{equation}\label{eq:A2}
+ |S_3|^2\ll x^\eta\left(\frac{(HX)^2}{\Pi}
+                       +HX\sum_{j=1}^7\mathcal J_j\right),
+\end{equation}
+where, for the selected row of \eqref{eq:local-powers},
+\begin{equation}\label{eq:Jterms}
+ \mathcal J_j=
+ \left(\frac{FH\alpha}{X}\right)^{a_j^\star}
+ H^{b_j^\star}X^{d_j^\star},\qquad 1\le j\le7.
+\end{equation}
+The comparability $T_\nu\asymp FH/X$ is uniform, including for the
+negative power. In both alternatives,
+\[
+ \mathcal J_7=\frac{HX}{\sqrt{FH\alpha/X}}.
+\]
+It is the average of a retained boundary error. Replacing $\beta$ by its
+smallest possible value would not give the stated estimate.
+The choice between the two bounds may depend on $N,H,X$, but not on
+an unaccounted exceptional set of individual shifts.
+
+\section{Case A: parameter choices and their certification}
+\label{sec:caseA}
+Assume
+\begin{equation}\label{eq:caseA-range}
+ x^{u_0}\le N\le x^\rho,\qquad
+ N^{1/3}\le X\le N^{9/20}.
+\end{equation}
+In this section and Appendix~\ref{app:affine}, the letters $u,v,h,f$
+denote logarithmic exponents:
+\[
+ N=x^u,\quad X=x^v,\quad H=x^h,\quad
+ \Fzero=x^f,\quad f=(1+u)/3.
+\]
+They are not the normalized positive coordinates used for the local models.
+
+Choose
+\begin{equation}\label{eq:first-q}
+ q_*=(N/x^{u_0})^{2/3},\qquad
+ q=\max\{1,\lfloor q_*\rfloor\},\qquad
+ \hcap=\frac23(u-u_0).
+\end{equation}
+Throughout \eqref{eq:caseA-range},
+\begin{equation}\label{eq:initial-cap-margin}
+ v-\hcap=\frac{11}{1209}+\frac{\rho-u}{3}
+                  +\left(v-\frac u3\right).
+\end{equation}
+Thus $q_*/X\le x^{-11/1209}$ and the first A is admissible. If $q=1$,
+$q_*<2$ implies $N=O(x^{u_0})$, so the trivial bound already gives
+\eqref{eq:box-target}. We henceforth treat the nonempty correlations.
+
+\subsection{The complete small-\texorpdfstring{$H$}{H} range}
+Put
+\begin{equation}\label{eq:Ht}
+ H_{\mathrm t}=N^{2/3}\Fzero^{-1/3}X^{-1/3},\qquad
+ \hthreshold=(2u-f-v)/3.
+\end{equation}
+The following exact identities hold on the whole Case A range:
+\begin{align}
+ \hthreshold&=\frac{1007}{36270}+\frac{73}{180}(u-u_0)
+                   +\frac13\left(\frac{9u}{20}-v\right),\notag\\
+ f-\hthreshold-v&=\frac{733}{7254}+\frac{47}{90}(\rho-u)
+                   +\frac23\left(\frac{9u}{20}-v\right),
+                   \label{eq:Ht-margins}\\
+ u-\hthreshold-v&=\frac{224}{1395}+\frac{13}{90}(u-u_0)
+                   +\frac23\left(\frac{9u}{20}-v\right).\notag
+\end{align}
+In particular $H_{\mathrm t}$ grows as a fixed power of $x$, and
+$H_{\mathrm t}X$ is smaller than both $\Fzero$ and $N$ by fixed powers.
+For $H\le H_{\mathrm t}$, use the trivial bound
+$\mathcal M_3(\nu)\ll HX$ in \eqref{eq:A1}. Its main term is
+\[
+ \sqrt{FH/X}\,HX=H^{3/2}\sqrt{FX}\ll N,
+\]
+and both errors in \eqref{eq:A1} are $O(N)$ by
+\eqref{eq:Ht-margins}. This includes empty or short frequency sets. If
+$H_{\mathrm t}>q_*$, all correlations are covered. Every remaining scale
+lies in the exact region
+\begin{equation}\label{eq:largeH-region}
+ u_0\le u\le\rho,\qquad u/3\le v\le9u/20,
+ \qquad \hthreshold\le h\le\hcap.
+\end{equation}
+
+\subsection{Nominal and integer second shifts}
+Set
+\begin{equation}\label{eq:c-p0-pb}
+ c=75h+16v-26f,\qquad
+ \mathfrak p_0=\frac{12h+79v-26f}{63},\qquad
+ \mathfrak p_b=11h+2f+7v-8u.
+\end{equation}
+On $c\le0$ take the axis choice
+\begin{equation}\label{eq:axis-choice}
+ \Pi=H^{-1/76}X^{23/19}\Fzero^{-13/38},\qquad
+ q_1=1,\quad q_2=\max\{1,\lfloor\Pi\rfloor\},\quad\alpha=\Pi/X.
+\end{equation}
+On $c\ge0$ take
+\begin{align}
+ \Pi_0&=H^{4/21}X^{79/63}\Fzero^{-26/63},\qquad
+ \Pi_b=H^{11}\Fzero^2X^7N^{-8},\notag\\
+ \Pi&=\max(\Pi_0,\Pi_b),\qquad
+ r_1=\sqrt{\Pi H/X},\quad r_2=\sqrt{\Pi X/H},\label{eq:full-choice}\\
+ q_j&=\max\{1,\lfloor r_j\rfloor\},\qquad
+ \alpha=\sqrt{\Pi/(HX)}.\notag
+\end{align}
+Use the long-direction bound \eqref{eq:L5} on the axis region and on
+the full region $\mathfrak p_0\ge\mathfrak p_b$. On the remaining full
+region $\mathfrak p_b\ge\mathfrak p_0$, use the conservative bound
+\eqref{eq:L5safe}. Thus the choice of $\star$ in \eqref{eq:Jterms}
+is fixed before averaging the second shifts. At a common boundary either
+of the applicable, certified choices may be used.
+
+This distinction is needed for the secondary term. If the long-direction
+seven terms were used throughout the boundary region with
+$\mathfrak p=\mathfrak p_b$, its second deficit at
+\[
+ (u,v,h)=\left(\frac{265}{403},\frac{477}{1612},\frac{254}{1209}\right)
+\]
+would be $-4213/1934400$. The conservative choice makes every required
+deficit nonnegative, as certified in Appendix~\ref{app:affine}.
+
+The lower choice $\Pi_b$ is required by the last term in
+\eqref{eq:Jterms}: in the full case its contribution to \eqref{eq:A1}
+after \eqref{eq:A2} is comparable to
+\begin{equation}\label{eq:Pi-boundary-term}
+ H^{11/8}\Fzero^{1/4}X^{7/8}\Pi^{-1/8}.
+\end{equation}
+Thus $\Pi\ge\Pi_b$ pays this term at the exponent level. Using only
+$\Pi_0$ would leave an uncovered part of the parameter region.
+
+\subsection{What the exact certificates prove}
+Appendix~\ref{app:affine} gives nonnegative rational combinations for every
+required affine inequality. The three Case A regions are the axis region,
+the full region with $\mathfrak p_0\ge\mathfrak p_b$, and the full region
+with $\mathfrak p_b\ge\mathfrak p_0$. The 44 certificates on these regions
+prove that every term of \eqref{eq:A2}, after taking a square root and
+multiplying by $\sqrt{FH/X}$, is $O(N)$, and that both errors of
+\eqref{eq:A1} are $O(N)$. They also prove
+\begin{equation}\label{eq:A-admissibility}
+ \Pi\ge x^{1/1000},\qquad
+ \alpha\le x^{-1/1000},\qquad
+ \Fzero H/N\ge x^{1/1000},\qquad H/X\le x^{-11/1209}.
+\end{equation}
+The stronger bound on $H/X$ also uses \eqref{eq:initial-cap-margin}
+and $h\le\hcap$. These are identities throughout the regions, not
+numerical tests at selected points.
+
+For clarity, check that the actual integer shifts satisfy all local
+hypotheses. In the full case,
+\[
+ \log_x\sqrt{\Pi_0H/X}=c/126\ge0,
+\]
+so $r_2\ge r_1\ge1$ and
+\begin{equation}\label{eq:integer-product}
+ r_j/2\le q_j\le r_j,\qquad \Pi/4\le\pint\le\Pi.
+\end{equation}
+The normalized lengths are at most $\alpha$, which tends to zero, and
+$q_2\ge\sqrt\Pi/2$ grows. In the axis case $q_2\asymp\Pi$ for large $x$,
+while the only first-coordinate correlation shift is zero. Thus the
+negative-power averages \eqref{eq:negative-average} hold for the rounded
+integers, and the nonnegative-power averages do also. The smallness of
+$H/X$ and of every occurring $\beta$ follows from
+\eqref{eq:A-admissibility}. The positive frequency scale condition follows
+from its third inequality. The final local clamp in \eqref{eq:Q-choice}
+uses the fixed $c_0$ already allowed in Proposition~\ref{prop:L5}.
+
+Consequently \eqref{eq:A2} is legitimately applicable with these choices,
+including its negative $Z$ power. Replacing $F$ by $3\Fzero$ changes only
+fixed constants in every propagated term. The parameter cuts include their
+boundaries and leave no gap. We have therefore proved
+\[
+ S_2(H)\ll Nx^\eta
+\]
+for every initial dyadic correlation scale, using either the small-$H$
+argument or the certificates. Equation~\eqref{eq:A0} gives
+$|S_1|\ll Nq^{-1/2}x^\eta$ after absorbing logarithms. Since $q\asymp q_*$
+outside the already treated trivial branch, its weighted exponent is
+\begin{equation}\label{eq:caseA-final}
+ \frac13+\frac u3-\frac{\hcap}{2}
+       =\frac13+\frac{u_0}{3}=\theta.
+\end{equation}
+This proves \eqref{eq:box-target} throughout Case A, uniformly in all
+original product cutoffs.
+
+\subsection{The balance determining the exponent}
+The parameter choices can also be read from the active balanced box.
+On $v=u/3$, balancing the first long-direction monomial with the second
+A diagonal gives $\mathfrak p=\mathfrak p_0$. Its propagated exponent
+in $S_2$ is
+\[
+ \frac{89f+177h-16v}{126}
+ =\frac{89+73u+531h}{378}.
+\]
+Equating this to $u$ gives the first-A balance
+$h_{\rm opt}=(305u-89)/531$. After the Voronoi weight, the corresponding
+box exponent is
+\[
+ E_{\mathrm L}(u)=\frac13+\frac u3-\frac{h_{\rm opt}}2
+                =\frac{443+49u}{1062}.
+\]
+The equality $E_{\mathrm L}(\rho)=2/3-\rho/3$ gives
+$\rho=265/403$ and $\theta=541/1209$. This explains the constants;
+the certificates, not this calculation alone, establish the entire range.
+
+\section{Case B: longer largest factors}
+\label{sec:caseB}
+We now assume
+\begin{equation}\label{eq:caseB-range}
+ x^{u_0}\le N\le x^\rho,\qquad N^{9/20}\le X\le N,
+ \qquad M=N/X,\quad L=F/X.
+\end{equation}
+
+\subsection{The first B transform and removal of its weight}
+Apply the one-dimensional B transform to the $n$ sum in \eqref{eq:S1}
+before any Cauchy inequality. Its stationary formulas are
+\begin{align}
+ n_l&=\frac{\sqrt{Rm}}{(3l)^{3/2}},\qquad
+ f_0(m,l)=\frac{2\sqrt{Rm}}{3\sqrt{3l}},\notag\\
+ w(m,l)&=\frac{(Rm)^{1/4}}{\sqrt2\,3^{1/4}l^{5/4}}.
+              \label{eq:caseB-firstB}
+\end{align}
+Stationary frequencies are positive and $l\asymp L$. The endpoint and B
+errors, summed against $|a_m|$, are
+\begin{equation}\label{eq:caseB-first-error}
+ \ll x^\eta(N/\sqrt F+M).
+\end{equation}
+If $X>F$, the stationary interval contains $O(1)$ integer frequencies or
+none. Its main term is bounded by the same quantity, so
+\begin{equation}\label{eq:caseB-short-first}
+ |S_1|\ll x^\eta(N/\sqrt F+M)\qquad (X>F).
+\end{equation}
+
+Suppose $X\le F$, so $L\ge1$. At $m=Mu$, $l=Lv$, the exact weight is
+\[
+ w(m,l)=\frac{X/\sqrt F}{\sqrt2\,3^{1/4}}u^{1/4}v^{-5/4}.
+\]
+The normalized amplitude has bounded $C^2$ norm on a positive ambient
+rectangle. Rectangular Abel removes it, retaining $a_m$ in the base array
+and retaining the exact stationary domain, including the product cutoffs.
+For each resulting unweighted-in-$l$ sum, Cauchy over the full $m$ interval
+removes $a_m$, and A in $l$ gives unit-coefficient correlations on the
+intersected and translated domain. The squared scale factors are
+\[
+ (X/\sqrt F)^2ML=N,\qquad
+ (X/\sqrt F)^2(ML)^2=M^2F.
+\]
+Consequently
+\begin{equation}\label{eq:caseB-A}
+ |S_1|^2\ll x^\eta\left(
+ \frac{M^2F}{q}+\frac Nq\sum_{1\le h<q}B_2(h)
+          +\frac{N^2}{F}+M^2\right).
+\end{equation}
+Each $B_2(h)$ denotes the absolute value of an unweighted correlation,
+uniformly over the resulting domains. For $q=1$ the correlations are
+empty. Whenever $q\ge2$, impose
+\begin{equation}\label{eq:caseB-cap}
+ q\le\frac{\min(X,L)}{C\log x},
+\end{equation}
+where $C\ge1$ is fixed. In particular $q\le L$ and $h/L$ is small for
+every nonempty correlation.
+
+\subsection{The exact local correlation and both short-dual cases}
+The correlation phase is
+\begin{equation}\label{eq:caseB-correlation}
+ f_1(m,l)=\frac{2\sqrt{Rm}}{3\sqrt3}
+          \bigl((l+h)^{-1/2}-l^{-1/2}\bigr).
+\end{equation}
+Set $P=hX$ and $\delta=h/L$. Its exact normalized phase divided by $P$
+is
+\[
+ \Gamma_\delta(u,v)=\frac{2\sqrt u}{3\sqrt3}
+       \frac{(v+\delta)^{-1/2}-v^{-1/2}}{\delta}.
+\]
+The integral identity
+\[
+ \Gamma_\delta(u,v)
+   =-\frac{\sqrt u}{3\sqrt3}\int_0^1(v+t\delta)^{-3/2}\dd t
+\]
+gives uniformly bounded $C^{20}$ norm on a slightly larger positive
+rectangle, independently of small $\delta$. It also shows, for every
+fixed $k$, that this is a $C^k$ perturbation, of size $O(\delta)$, of
+\[
+ \Gamma_0(u,v)=-\frac1{3\sqrt3}u^{1/2}v^{-3/2}.
+\]
+The exact $m,m$ derivative never vanishes: the phase is $\sqrt m$ times
+a strictly negative function of $l$. The model Hessian determinant is
+nonzero, hence the exact normalized determinant is uniformly nonzero
+for sufficiently small $\delta$. We may therefore use the fixed-order
+$\Rfine(M,L,P)$ of Lemma~\ref{lem:sharpB}.
+
+Solving the two gradient equations of the model monomial gives a Legendre
+phase
+\[
+ C_1|r|^{-1/4}|s|^{3/4},\qquad C_1\ne0,
+\]
+on its fixed opposite-sign frequency quadrant. On normalized compact
+inverse environments, $|r|,|s|$ stay bounded away from zero. The pure third
+derivative in $s$ is
+\[
+ \frac{15}{64}C_1\operatorname{sgn}(s)
+                      |r|^{-1/4}|s|^{-9/4},
+\]
+which is uniformly nonzero. The common inverse argument of
+Lemma~\ref{lem:transfer} transfers this to the exact phase.
+
+If both dual lengths $P/M,P/L$ are at least one, use
+\eqref{eq:third-test} in the second dual variable and count the first.
+Exactly as in the proof of \eqref{eq:terminal}, this gives
+$\sqrt L P^{2/3}+P^{5/6}$. Including the complete finer remainder yields
+\begin{equation}\label{eq:B2}
+ B_2(h)\ll x^\eta\left(
+       \sqrt L P^{2/3}+P^{5/6}+\sqrt P+\frac{ML}{\sqrt P}+L\right).
+\end{equation}
+Here $ML/P$ was absorbed by $ML/\sqrt P$, since $P=hX\ge1$.
+
+We verify \eqref{eq:B2} also when a dual side is short. If $P<L$, the
+complete trivial dual main term
+\[
+ P+M+L+ML/P
+\]
+and $\Rfine(M,L,P)$ are bounded, up to a logarithm, by
+$L+ML/\sqrt P$. Indeed $P\le L$, $L\ge\sqrt P$, and
+$M\le ML/\sqrt P$.
+
+The only remaining short-dual case is $L\le P<M$. Since $P=hX\ge X$,
+it implies $X^2<N$. Consequently
+\begin{equation}\label{eq:B-short-margin}
+ \frac{M}{L^2}=\frac{NX}{F^2}
+ \ll N^{5/6}x^{-2/3}
+ \le x^{-287/2418},\qquad
+ \frac{5\rho-4}{6}=-\frac{287}{2418}.
+\end{equation}
+For sufficiently large $x$, we have $P<M<L^2$, so again
+$L\ge\sqrt P$. Both $P$ and $M$ are bounded by $ML/\sqrt P$, and the
+same absorption applies. This argument uses the actual global range
+\eqref{eq:caseB-range}; it is not asserted for arbitrary $M,L$.
+These cases exhaust all short duals, including their equality boundaries,
+and prove \eqref{eq:B2} for every nonempty correlation.
+
+\subsection{Summation, caps and integer rounding}
+The contribution of $ML/\sqrt{hX}$ to \eqref{eq:caseB-A}, divided by its
+diagonal $M^2F/q$, is $O(\sqrt{q/X})$, hence is absorbed by
+\eqref{eq:caseB-cap}. Also $\sqrt P\le P^{5/6}$. The remaining variable
+terms for $q\ge2$ are
+\begin{equation}\label{eq:B-balance}
+ \frac aq+bq^{2/3}+c_1q^{5/6},\qquad
+ a=\frac{N^2F}{X^2},\quad b=NF^{1/2}X^{1/6},\quad c_1=NX^{5/6},
+\end{equation}
+together with $NF/X+N^2/F+M^2$. For $q=1$, the corresponding estimate is
+only $a+N^2/F+M^2$, with no correlation terms inserted.
+
+Choose
+\begin{equation}\label{eq:B-q}
+ q_b=(a/b)^{3/5},\quad q_c=(a/c_1)^{6/11},\quad
+ K=\frac{\min(X,L)}{C\log x},\quad
+ q=\max\{1,\lfloor\min(q_b,q_c,K)\rfloor\}.
+\end{equation}
+If the minimum is at least two, $q$ is between half that minimum and the
+minimum. Hence
+\begin{align*}
+ a/q&\ll a^{2/5}b^{3/5}+a^{5/11}c_1^{6/11}+a/K,\\
+ bq^{2/3}&\le a^{2/5}b^{3/5},\qquad
+ c_1q^{5/6}\le a^{5/11}c_1^{6/11}.
+\end{align*}
+The cap term satisfies
+\[
+ a/K\ll\log x\left(\frac{N^2}{X}+\frac{N^2F}{X^3}\right).
+\]
+If the minimum is less than two, $q=1$. The responsible term among
+$a/q_b,a/q_c,a/K$ is already at least $a/2$, so the same retained bound
+follows. This includes $K<1$ without requiring an impossible nonempty-shift
+cap for $q=1$.
+
+Substituting the two balances gives the seven terms
+\begin{align}\label{eq:Bfinal}
+ |S_1|^2\ll x^\eta\biggl(&\frac{N^2}{X}+\frac{N^2F}{X^3}
+       +N^{7/5}F^{7/10}X^{-7/10}\notag\\
+       &+N^{16/11}F^{5/11}X^{-5/11}
+       +\frac{NF}{X}+\frac{N^2}{F}+M^2\biggr).
+\end{align}
+Write $N=x^u$, $X=x^v$ and $\Fzero=x^{(1+u)/3}$ as before. After taking
+a square root and multiplying by $x^{1/3}N^{-2/3}$, the seven budget
+exponents are
+\begin{align}
+ B_1&=\frac13+\frac u3-\frac v2,
+ & B_2&=\frac12+\frac u2-\frac{3v}{2},\notag\\
+ B_3&=\frac9{20}+\frac{3u}{20}-\frac{7v}{20},
+ & B_4&=\frac9{22}+\frac{3u}{22}-\frac{5v}{22},
+                 \label{eq:Bexponents}\\
+ B_5&=\frac12-\frac v2,
+ & B_6&=\frac{1+u}{6},\qquad
+ B_7=\frac13+\frac u3-v.\notag
+\end{align}
+The last seven certificates in Appendix~\ref{app:affine} prove
+$B_j<\theta$ on $u_0\le u\le\rho$, $9u/20\le v\le u$.
+The smallest constant margin is $11/241800$. The bound
+\eqref{eq:caseB-short-first} uses $B_6,B_7$, so it is covered as well.
+The fixed relation $F=3\Fzero$ changes only constants. This proves
+\eqref{eq:box-target} on the whole Case B range.
+
+\section{Assembly of the proposed pointwise bound}
+\label{sec:assembly}
+We complete the argument for Theorem~\ref{thm:main}. A factor box with
+$N\le x^{u_0}$ contains $O(N)$ triples, so its contribution after product
+Abel is
+\[
+ O(x^{1/3}N^{1/3})\ll x^{1/3+u_0/3}=x^\theta.
+\]
+For every larger nonempty box, \eqref{eq:box-range} gives exactly
+$u_0\le\log_xN\le\rho$ and $N^{1/3}\le X\le N$. The two cases
+$X\le N^{9/20}$ and $X\ge N^{9/20}$ overlap at the boundary and exhaust
+this interval. Sections~\ref{sec:caseA} and \ref{sec:caseB} prove
+\eqref{eq:box-target} uniformly in the product cuts needed by Abel
+summation. Summing the $O(\log^3x)$ factor boxes bounds the main oscillating
+sum in \eqref{eq:voronoi}.
+
+All original factor cutoffs, first-A subintervals, stationary domains,
+rectangular cuts and shifted intersections lie in the uniform domain
+families already treated. The estimates are for each original real $x$;
+no averaging in $x$ or almost-everywhere assertion has been used. The
+intermediate endpoint and isolated-fiber costs are those explicitly
+retained in the B errors. In particular, the cutoff at $Y$ is part of
+the product-domain estimate, not a discarded summand.
+
+Choose one auxiliary $\eta>0$ sufficiently small compared with the desired
+$\eps$. There are finitely many sums and Cauchy or Abel operations, and
+only fixed logarithmic powers. Thus the total loss has the form
+$x^{C\eta}(\log x)^C$ for a fixed $C$. Choose $\eta<\eps/(2C)$ and absorb
+the logarithm into $x^{\eps/2}$. The positive margins establishing chart
+admissibility are independent of this choice. Since
+$Y=\lfloor x^\rho\rfloor\ge x^\rho/2$ for large $x$, the remaining tail is
+\[
+ x^{2/3+\eta}Y^{-1/3}
+ \ll x^{2/3-\rho/3+\eta}=x^{\theta+\eta}.
+\]
+Together with \eqref{eq:endpoint-identities}, this is the proposed bound
+$\Delta_3(x)\ll_\eps x^{541/1209+\eps}$. Finite smaller $x$ are covered by
+enlarging the implied constant.\hfill$\square$
+
+\appendix
+\section{Exact model derivative certificates}
+\label{app:model}
+This appendix supplies the algebraic details used in
+Lemma~\ref{lem:model}. All derivatives of Legendre phases are evaluated
+at the successive points corresponding to the original $(u,v)$.
+For a polynomial $P(z)=\sum_{j=0}^d c_jz^j$, write
+\[
+ P^{\rm hom}(a,b)=\sum_{j=0}^d c_j a^{d-j}b^j.
+\]
+
+\subsection{The quartic and degree-nine polynomials}
+Define
+\begin{align*}
+ P_4(z)&=7+70z+252z^2+432z^3+324z^4,\\
+ Q_4(z)&=1-8z-72z^2-108z^3-108z^4,\\
+ R_9(z)&=-1-17z-196z^2-920z^3+468z^4+19332z^5\\
+       &\quad+75600z^6+124416z^7+93312z^8+46656z^9,\\
+ S_9(z)&=7+168z+1764z^2+11010z^3+45711z^4+131814z^5\\
+       &\quad+265896z^6+363528z^7+306180z^8+122472z^9.
+\end{align*}
+At $u=v=1$, put
+\[
+ D_{ab}=a^2+4ab+6b^2,\qquad E_{ab}=a^2+6ab+18b^2.
+\]
+The exact pure derivatives are
+\begin{align}
+ K_{0,11}&=-\frac{16P_4^{\rm hom}(a,b)}{9D_{ab}^3},
+ &K_{0,22}&=\frac{2Q_4^{\rm hom}(a,b)}{9D_{ab}^3},
+                    \label{eq:Kquartics}\\
+ \Psi_{0,111}&=\frac{27R_9^{\rm hom}(a,b)}{1600E_{ab}^3},
+ &\Psi_{0,222}&=\frac{27S_9^{\rm hom}(a,b)}{25E_{ab}^3}.
+                    \label{eq:Psi-at-one}
+\end{align}
+For general positive $u,v$, let $t=u/v$ and
+$E_0=a^2+6abt+18b^2t^2$. The same pure third derivatives are
+\begin{align}
+ \Psi_{0,111}
+   &=\frac{27a^9 R_9(bt/a)}{1600v^{13/2}t^{7/2}E_0^3},\notag\\
+ \Psi_{0,222}
+   &=\frac{27a^9 S_9(bt/a)}{25v^{13/2}\sqrt t\,E_0^3}.
+                  \label{eq:Psi-general}
+\end{align}
+At $a=0$ these expressions mean their homogeneous polynomial extensions,
+not division by $a$.
+
+\subsection{A direct differentiation procedure}
+Let $I=(\Hess G_0)^{-1}$. Since $\Phi_{0,p}=-u$, put
+\begin{align}
+ r=K_{0,p}=-I_{11}
+   &=\frac{8u^{3/2}v^2(av+3bu)}{3D},\notag\\
+ s=K_{0,q}=-I_{12}
+   &=\frac{2\sqrt u\,v^3(av+6bu)}{3D}.
+                  \label{eq:r-s-inverse}
+\end{align}
+The homogeneity degree of $G_0$ in $(u,v)$ is $-1/2$. Consequently
+$\Phi_0$ has degree $1/3$ in $(p,q)$, and $K_0$ has degree $-2/3$.
+Euler's identity therefore gives
+\begin{equation}\label{eq:Psi-value}
+ \Psi_0=K_0-pr-qs=\frac53 K_0=-\frac53u.
+\end{equation}
+Use the inverse Jacobian of $(u,v)\mapsto(r,s)$ in
+\eqref{eq:r-s-inverse} to differentiate \eqref{eq:Psi-value} three times
+in $r$ or $s$. This gives \eqref{eq:Psi-general}. In particular, this
+procedure does not assume $r$ or $s$ is nonzero.
+
+All expressions can be checked using rational functions by setting
+$u=w^2$, so $\partial_u=(2w)^{-1}\partial_w$. Explicitly define
+\[
+ D_p=I_{11}\partial_u+I_{21}\partial_v,\qquad
+ D_q=I_{12}\partial_u+I_{22}\partial_v.
+\]
+Then $r=D_p(-u)$, $s=D_q(-u)$ and
+$\Hess K_0$ has entries $D_iD_j(-u)$. If
+$J=\partial(r,s)/\partial(w,v)$, the columns of $J^{-1}$ give the
+coefficients of $\partial_r,\partial_s$ as operators in
+$\partial_w,\partial_v$. This finite differentiation procedure verifies
+\eqref{eq:model-dets}, \eqref{eq:Kquartics} and
+\eqref{eq:Psi-general} without explicitly solving a high-degree inverse.
+
+There is also a tensor check at $(1,1)$. The jet is
+\[
+ \partial_u^j\partial_v^kG_0(1,1)
+   =a(1/2)_{\underline j}(-1)_{\underline k}
+       +b(3/2)_{\underline j}(-2)_{\underline k},
+\]
+where the underline denotes a falling factorial. Write $v_i=Ie_i$ and
+let the vector $B_{ij}$ have components $G_0'''(e_r,v_i,v_j)$. Differentiating
+$\Hess\Phi_0=-I$ gives
+\begin{align*}
+ \Phi_{0,ijk}&=G_0'''(v_i,v_j,v_k),\\
+ \Phi_{0,ijkl}&=G_0''''(v_i,v_j,v_k,v_l)
+       -B_{ij}^{\mathsf T}IB_{kl}-B_{ik}^{\mathsf T}IB_{jl}
+       -B_{il}^{\mathsf T}IB_{jk}.
+\end{align*}
+Thus if $L_{ij}=\Phi_{0,1ij}$ and $J_0=L^{-1}$, then
+\[
+ \Psi_{0,rrr}=K_0'''(J_0e_r,J_0e_r,J_0e_r),
+ \qquad K_{0,ijk}=\Phi_{0,1ijk}.
+\]
+Substitution of the displayed jet gives exactly
+\eqref{eq:Kquartics} and \eqref{eq:Psi-at-one}.
+
+\subsection{Noncoincidence and the missing projective direction}
+For a list $[c_0,\ldots,c_d]$, let $[c_0,\ldots,c_d](z)$ mean
+$\sum_{j=0}^d c_jz^j$. The following two polynomial identities hold in
+$\mathbb F_{101}[z]$:
+\begin{align}
+ &[81,68,77,20](z)P_4(z)
+       +[40,32,49,60](z)Q_4(z)=1,\label{eq:bezout4}\\
+ &[8,56,98,2,87,80,95,42,3](z)R_9(z)\notag\\
+ &\hspace{22mm}+[59,11,89,19,55,63,66,100,71](z)S_9(z)=1.
+                         \label{eq:bezout9}
+\end{align}
+They are checked by polynomial multiplication and coefficient reduction.
+The leading coefficients of $P_4,Q_4,R_9,S_9$ modulo $101$ are
+$21,94,95,60$, respectively. Thus the degrees survive reduction and the
+two pairs are coprime over $\Q$ (equivalently, their integer resultants
+are nonzero; their residues are $97$ and $51$). Here and below $\Q$
+denotes the field of rational numbers.
+
+At $a=0$, $b\ne0$, the unit-point values are
+\begin{equation}\label{eq:a-zero}
+ K_{0,11}=-\frac8{3b^2},\quad K_{0,22}=-\frac1{9b^2},\quad
+ \Psi_{0,111}=\frac{27b^3}{200},\quad
+ \Psi_{0,222}=\frac{567b^3}{25}.
+\end{equation}
+This checks the projective direction omitted by setting $z=b/a$.
+
+Finally, checking at $(1,1)$ loses no points. At any $(u_*,v_*)>0$, rescale
+the analytic variables and replace the parameter pair by
+\[
+ (a',b')=\left(a\sqrt{u_*}/v_*,\ b u_*^{3/2}/v_*^2\right).
+\]
+The pure second derivatives of $K_0$ acquire the positive scaling factors
+$u_*^3$ and $u_*v_*^2$, and the pure third derivatives of $\Psi_0$ acquire
+$u_*^{-5}$ and $u_*^{-2}v_*^{-3}$. The transformed parameter pair stays
+in a compact set separated from zero. Since $D_{ab}$ and $E_{ab}$ are
+positive away from $(0,0)$, the polynomial noncoincidence, the explicit
+axis values and compactness prove all uniform lower bounds asserted in
+Lemma~\ref{lem:model}.
+
+\subsection{Fourth and fifth derivatives in the same coordinate}
+\label{app:four-five}
+In addition to the degree-nine certificates above, we require the
+same-coordinate condition \eqref{eq:pure-four-five-model}. Continuing
+the inverse-Jacobian differentiation in \eqref{eq:r-s-inverse} in the
+second terminal coordinate gives, at $u=v=1$,
+\begin{align}
+ \Psi_{0,2222}
+   &=-\frac{81Q_{14}^{\rm hom}(a,b)}{250E_{ab}^5},\label{eq:Psi-four}\\
+ \Psi_{0,22222}
+   &=\frac{243Q_{19}^{\rm hom}(a,b)}{1250E_{ab}^7}.\label{eq:Psi-five}
+\end{align}
+The following table gives all coefficients in
+$Q_d(z)=\sum_{i=0}^d c_i z^i$. The homogeneous convention is that
+at the beginning of Appendix~\ref{app:model}.
+\begin{center}
+\small
+\begin{longtable}{r rr}
+\toprule
+$i$ & $[z^i]Q_{14}$ & $[z^i]Q_{19}$\\
+\midrule
+\endfirsthead
+\toprule
+$i$ & $[z^i]Q_{14}$ & $[z^i]Q_{19}$\\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+0 & 119 & 1309\\
+1 & 4522 & 68068\\
+2 & 77826 & 1625778\\
+3 & 824568 & 24203784\\
+4 & 6106629 & 255656181\\
+5 & 33762834 & 2057394312\\
+6 & 144505512 & 13172633964\\
+7 & 487756296 & 68944652064\\
+8 & 1305974988 & 299918873502\\
+9 & 2759927904 & 1094360860548\\
+10 & 4528553832 & 3361429410120\\
+11 & 5592351456 & 8683008133680\\
+12 & 4917915648 & 18765796869360\\
+13 & 2764437984 & 33609519267840\\
+14 & 753937632 & 49138093018080\\
+15 & 0 & 57316640278464\\
+16 & 0 & 51469491145248\\
+17 & 0 & 33532209482688\\
+18 & 0 & 14167995980544\\
+19 & 0 & 2931309513216\\
+\end{longtable}
+\end{center}
+
+For a polynomial specified by its ascending coefficient list, there is
+the identity
+\begin{equation}\label{eq:bezout-four-five}
+ A_{18}(z)Q_{14}(z)+B_{13}(z)Q_{19}(z)\equiv1\pmod{101}.
+\end{equation}
+To specify the certificate without a long unbroken coefficient list, write
+\[
+ A_{18}(z)=A^{(0)}(z)+z^{10}A^{(1)}(z),\qquad
+ B_{13}(z)=B^{(0)}(z)+z^7B^{(1)}(z),
+\]
+where the ascending lists are
+\begin{align*}
+ A^{(0)}&=[45,18,2,88,53,55,93,1,71,67],\\
+ A^{(1)}&=[100,76,17,21,72,87,0,57,6],\\
+ B^{(0)}&=[76,87,44,85,8,90,22],\\
+ B^{(1)}&=[11,90,96,45,74,100,12].
+\end{align*}
+All coefficients are interpreted in $\mathbb F_{101}$. Direct
+multiplication verifies \eqref{eq:bezout-four-five}. The leading
+coefficients of $Q_{14}$ and $Q_{19}$ reduce to $3$ and $49$, so their
+degrees survive reduction. Their resultant is $29$ modulo $101$.
+Consequently the two integer polynomials are coprime over $\mathbb Q$
+and have no common finite complex zero.
+
+At $a=0$, the omitted projective direction is
+\begin{equation}\label{eq:four-five-axis}
+ \Psi_{0,2222}=-\frac{32319}{250}b^4,\qquad
+ \Psi_{0,22222}=\frac{581742}{625}b^5,
+\end{equation}
+which are both nonzero for $b\ne0$.
+Under the positive-coordinate rescaling described above, the fourth
+and fifth derivatives acquire respectively the positive factors
+$u_*^{-3}v_*^{-4}$ and $u_*^{-4}v_*^{-5}$.
+The transformed parameters remain in a compact set separated from zero,
+and $E_{ab}>0$ there. Compactness gives the uniform lower bound
+\eqref{eq:pure-four-five-model}. The $C^5$ comparison in
+Lemma~\ref{lem:transfer} transfers it to the exact phase. Thus zeros
+of its fourth derivative are treated by Lemma~\ref{lem:sublevel-fourth}
+without replacing the phase in an exponential sum by its model.
+
+\section{Exact affine certificates for all parameter ranges}
+\label{app:affine}
+All identities in this appendix are over the rational numbers. They can be
+verified by comparing coefficients of $1,u,v,h$. Every right side is a
+nonnegative rational combination of generators that are nonnegative on
+the stated region. No numerical vertex search is needed to use the
+certificates.
+
+\subsection{Deficits and common generators}
+Retain
+\[
+ u_0=\frac{138}{403},\quad \rho=\frac{265}{403},\quad
+ f=\frac{1+u}{3},\quad
+ \hthreshold=\frac{2u-f-v}{3},\quad
+ \hcap=\frac{2(u-u_0)}3,
+\]
+and $c,\mathfrak p_0,\mathfrak p_b$ from \eqref{eq:c-p0-pb}.
+Write $\mathfrak p=\log_x\Pi$, $\mathfrak a=\log_x\alpha$ for the
+nominal, not rounded, scales. In the axis and main full regions use
+$(a_j,b_j,d_j)=(a_j^{\mathrm L},b_j^{\mathrm L},d_j^{\mathrm L})$
+from \eqref{eq:local-powers}; in the boundary full region use the
+conservative row $\star=\mathrm S$.
+
+The propagated deficits for \eqref{eq:A2} followed by \eqref{eq:A1} are
+\begin{align}
+ \mathcal D&=u-\frac{f+3h+v-\mathfrak p}{2},\label{eq:deficit-D}\\
+ \mathcal C_j&=u-\frac{f+h-v}{2}
+ -\frac{h+v+a_j(f+h-v+\mathfrak a)+b_jh+d_jv}{2}.
+ \label{eq:deficit-J}
+\end{align}
+In particular, $\mathcal C_j$ is a deficit for the contribution to
+$S_2$, not merely for $\mathcal J_j$. Define
+\[
+ \mathcal E_{\rm end}=u-h-v,\qquad
+ \mathcal E_{\rm curv}=\frac{f-h-v}{2},\qquad
+ \Qone=\frac{\mathfrak p+h-v}{2}.
+\]
+The common generators are
+\begin{align*}
+ g_0&=1,&g_1&=u-u_0,&g_2&=\rho-u,\\
+ g_3&=v-u/3,&g_4&=9u/20-v,&g_5&=h-\hthreshold,\\
+ g_6&=\hcap-h.
+\end{align*}
+They are nonnegative on \eqref{eq:largeH-region}. The extra generators
+and the selected exponents are specified in each subregion below.
+
+\subsection{Case A: the axis region}
+Here $c\le0$ and the long-direction powers are used:
+\[
+ g_7=-c,\qquad
+ \mathfrak p=\frac{-h+92v-26f}{76},\qquad
+ \mathfrak a=\mathfrak p-v.
+\]
+The 14 certificates are
+\begingroup
+\small
+\begin{align}
+% CERT|axis|D|329/24180*g0 + 6/35*g3 + 67/56*g6 + 11/2660*g7
+\mathcal D &= \frac{329}{24180}g_{0}+\frac{6}{35}g_{3}+\frac{67}{56}g_{6}+\frac{11}{2660}g_{7}\label{cert:axis:1}\\
+% CERT|axis|C1|329/24180*g0 + 6/35*g3 + 67/56*g6 + 11/2660*g7
+\mathcal C_1 &= \frac{329}{24180}g_{0}+\frac{6}{35}g_{3}+\frac{67}{56}g_{6}+\frac{11}{2660}g_{7}\label{cert:axis:2}\\
+% CERT|axis|C2|941/64480*g0 + 11/140*g3 + 521/448*g6 + 87/21280*g7
+\mathcal C_2 &= \frac{941}{64480}g_{0}+\frac{11}{140}g_{3}+\frac{521}{448}g_{6}+\frac{87}{21280}g_{7}\label{cert:axis:3}\\
+% CERT|axis|C3|5675/251472*g0 + 5/182*g4 + 3287/2912*g6 + 87/55328*g7
+\mathcal C_3 &= \frac{5675}{251472}g_{0}+\frac{5}{182}g_{4}+\frac{3287}{2912}g_{6}+\frac{87}{55328}g_{7}\label{cert:axis:4}\\
+% CERT|axis|C4|4817/125736*g0 + 5/91*g4 + 1649/1456*g6 + 87/27664*g7
+\mathcal C_4 &= \frac{4817}{125736}g_{0}+\frac{5}{91}g_{4}+\frac{1649}{1456}g_{6}+\frac{87}{27664}g_{7}\label{cert:axis:5}\\
+% CERT|axis|C5|17/3720*g0 + 29/70*g3 + 143/112*g6 + 13/10640*g7
+\mathcal C_5 &= \frac{17}{3720}g_{0}+\frac{29}{70}g_{3}+\frac{143}{112}g_{6}+\frac{13}{10640}g_{7}\label{cert:axis:6}\\
+% CERT|axis|C6|15403/502944*g0 + 25/52*g4 + 757/832*g6 + 1/832*g7
+\mathcal C_6 &= \frac{15403}{502944}g_{0}+\frac{25}{52}g_{4}+\frac{757}{832}g_{6}+\frac{1}{832}g_{7}\label{cert:axis:7}\\
+% CERT|axis|C7|11899/335296*g0 + 445/728*g4 + 9897/11648*g6 + 1191/221312*g7
+\mathcal C_7 &= \frac{11899}{335296}g_{0}+\frac{445}{728}g_{4}+\frac{9897}{11648}g_{6}+\frac{1191}{221312}g_{7}\label{cert:axis:8}\\
+% CERT|axis|p-1/1000|826529/22971000*g0 + 15/19*g3 + 24/19*g5 + 97/76*g6
+\mathfrak p-\frac1{1000} &= \frac{826529}{22971000}g_{0}+\frac{15}{19}g_{3}+\frac{24}{19}g_{5}+\frac{97}{76}g_{6}\label{cert:axis:9}\\
+% CERT|axis|-alpha-1/1000|132393863/1079637000*g0 + 220/893*g4 + 96/893*g5 + 337/3572*g6
+-\mathfrak a-\frac1{1000} &= \frac{132393863}{1079637000}g_{0}+\frac{220}{893}g_{4}+\frac{96}{893}g_{5}+\frac{337}{3572}g_{6}\label{cert:axis:10}\\
+% CERT|axis|f+h-u-1/1000|353789/5211000*g0 + 80/193*g4 + 2912/1737*g5 + 47/5211*g7
+f+h-u-\frac1{1000} &= \frac{353789}{5211000}g_{0}+\frac{80}{193}g_{4}+\frac{2912}{1737}g_{5}+\frac{47}{5211}g_{7}\label{cert:axis:11}\\
+% CERT|axis|v-h-1/1000|4007/93000*g0 + 39/35*g3 + 13/28*g6 + 1/140*g7
+v-h-\frac1{1000} &= \frac{4007}{93000}g_{0}+\frac{39}{35}g_{3}+\frac{13}{28}g_{6}+\frac{1}{140}g_{7}\label{cert:axis:12}\\
+% CERT|axis|Berr1|1349/8112*g0 + 25/26*g4 + 341/416*g6 + 1/416*g7
+\mathcal E_{\rm end} &= \frac{1349}{8112}g_{0}+\frac{25}{26}g_{4}+\frac{341}{416}g_{6}+\frac{1}{416}g_{7}\label{cert:axis:13}\\
+% CERT|axis|Berr2|359/5211*g0 + 80/193*g4 + 613/3474*g5 + 47/5211*g7
+\mathcal E_{\rm curv} &= \frac{359}{5211}g_{0}+\frac{80}{193}g_{4}+\frac{613}{3474}g_{5}+\frac{47}{5211}g_{7}\label{cert:axis:14}
+\end{align}
+\endgroup
+
+
+\subsection{Case A: the main full region}
+Here $c\ge0$, $\mathfrak p_0\ge\mathfrak p_b$, and the long-direction
+powers are used:
+\[
+ g_7=c,\quad g_8=\mathfrak p_0-\mathfrak p_b,\quad
+ \mathfrak p=\mathfrak p_0,\quad
+ \mathfrak a=\frac{\mathfrak p-h-v}{2}.
+\]
+The 15 certificates are
+\begingroup
+\small
+\begin{align}
+% CERT|main|D|7/54*g2 + 8/63*g3 + 59/42*g6
+\mathcal D &= \frac{7}{54}g_{2}+\frac{8}{63}g_{3}+\frac{59}{42}g_{6}\label{cert:main:1}\\
+% CERT|main|C1|7/54*g2 + 8/63*g3 + 59/42*g6
+\mathcal C_1 &= \frac{7}{54}g_{2}+\frac{8}{63}g_{3}+\frac{59}{42}g_{6}\label{cert:main:2}\\
+% CERT|main|C2|5/19344*g0 + 59/432*g2 + 2/63*g3 + 929/672*g6
+\mathcal C_2 &= \frac{5}{19344}g_{0}+\frac{59}{432}g_{2}+\frac{2}{63}g_{3}+\frac{929}{672}g_{6}\label{cert:main:3}\\
+% CERT|main|C3|35849/1695018*g0 + 15/4907*g4 + 42979/39256*g6 + 7/1402*g8
+\mathcal C_3 &= \frac{35849}{1695018}g_{0}+\frac{15}{4907}g_{4}+\frac{42979}{39256}g_{6}+\frac{7}{1402}g_{8}\label{cert:main:4}\\
+% CERT|main|C4|10333/437658*g0 + 43/543*g2 + 827/724*g6 + 3/181*g8
+\mathcal C_4 &= \frac{10333}{437658}g_{0}+\frac{43}{543}g_{2}+\frac{827}{724}g_{6}+\frac{3}{181}g_{8}\label{cert:main:5}\\
+% CERT|main|C5|17/3720*g0 + 29/70*g3 + 143/112*g6 + 1/720*g7
+\mathcal C_5 &= \frac{17}{3720}g_{0}+\frac{29}{70}g_{3}+\frac{143}{112}g_{6}+\frac{1}{720}g_{7}\label{cert:main:6}\\
+% CERT|main|C6|41099/1695018*g0 + 260/701*g4 + 2123/2804*g6 + 63/2804*g8
+\mathcal C_6 &= \frac{41099}{1695018}g_{0}+\frac{260}{701}g_{4}+\frac{2123}{2804}g_{6}+\frac{63}{2804}g_{8}\label{cert:main:7}\\
+% CERT|main|C7|1/8*g8
+\mathcal C_7 &= \frac{1}{8}g_{8}\label{cert:main:8}\\
+% CERT|main|p-1/1000|4007/93000*g0 + 39/35*g3 + 13/28*g6 + 11/1260*g7
+\mathfrak p-\frac1{1000} &= \frac{4007}{93000}g_{0}+\frac{39}{35}g_{3}+\frac{13}{28}g_{6}+\frac{11}{1260}g_{7}\label{cert:main:9}\\
+% CERT|main|-alpha-1/1000|1963783/15717000*g0 + 20/91*g4 + 11/364*g6 + 19/3276*g7
+-\mathfrak a-\frac1{1000} &= \frac{1963783}{15717000}g_{0}+\frac{20}{91}g_{4}+\frac{11}{364}g_{6}+\frac{19}{3276}g_{7}\label{cert:main:10}\\
+% CERT|main|f+h-u-1/1000|179623/3627000*g0 + 47/180*g2 + 1/3*g4 + 1*g5
+f+h-u-\frac1{1000} &= \frac{179623}{3627000}g_{0}+\frac{47}{180}g_{2}+\frac{1}{3}g_{4}+g_{5}\label{cert:main:11}\\
+% CERT|main|v-h-1/1000|9791/1209000*g0 + 1/3*g2 + 1*g3 + 1*g6
+v-h-\frac1{1000} &= \frac{9791}{1209000}g_{0}+\frac{1}{3}g_{2}+g_{3}+g_{6}\label{cert:main:12}\\
+% CERT|main|Berr1|130126/847509*g0 + 520/701*g4 + 721/1402*g6 + 63/1402*g8
+\mathcal E_{\rm end} &= \frac{130126}{847509}g_{0}+\frac{520}{701}g_{4}+\frac{721}{1402}g_{6}+\frac{63}{1402}g_{8}\label{cert:main:13}\\
+% CERT|main|Berr2|166567/6586632*g0 + 22193/81720*g2 + 319/1362*g4 + 21/454*g8
+\mathcal E_{\rm curv} &= \frac{166567}{6586632}g_{0}+\frac{22193}{81720}g_{2}+\frac{319}{1362}g_{4}+\frac{21}{454}g_{8}\label{cert:main:14}\\
+% CERT|main|q1|1/126*g7
+\Qone &= \frac{1}{126}g_{7}\label{cert:main:15}
+\end{align}
+\endgroup
+
+
+The first two equalities are the active balances. In particular,
+\[
+ \mathcal D=\mathcal C_1
+ =\frac7{54}(\rho-u)+\frac8{63}(v-u/3)
+     +\frac{59}{42}(\hcap-h).
+\]
+The second correlation has the strict margin
+\[
+ \mathcal C_2=\frac5{19344}+\frac{59}{432}(\rho-u)
+ +\frac2{63}(v-u/3)+\frac{929}{672}(\hcap-h).
+\]
+
+\subsection{Case A: the boundary full region}
+Here $c\ge0$, $\mathfrak p_b\ge\mathfrak p_0$, and the conservative
+powers from \eqref{eq:L5safe} must be used:
+\[
+ g_7=c,\quad g_8=\mathfrak p_b-\mathfrak p_0,\quad
+ \mathfrak p=\mathfrak p_b,\quad
+ \mathfrak a=\frac{\mathfrak p-h-v}{2}.
+\]
+The last correlation deficit is zero, as expected from $\Pi=\Pi_b$.
+The 15 certificates are
+\begingroup
+\small
+\begin{align}
+% CERT|boundary|D|640/72943*g0 + 187/1086*g2 + 595/362*g6 + 189/362*g8
+\mathcal D &= \frac{640}{72943}g_{0}+\frac{187}{1086}g_{2}+\frac{595}{362}g_{6}+\frac{189}{362}g_{8}\label{cert:boundary:1}\\
+% CERT|boundary|C1|149/241800*g0 + 1331/3000*g2 + 33/50*g4 + 277/100*g6
+\mathcal C_1 &= \frac{149}{241800}g_{0}+\frac{1331}{3000}g_{2}+\frac{33}{50}g_{4}+\frac{277}{100}g_{6}\label{cert:boundary:2}\\
+% CERT|boundary|C2|15329/13540800*g0 + 72251/168000*g2 + 1593/2800*g4 + 3673/1400*g6
+\mathcal C_2 &= \frac{15329}{13540800}g_{0}+\frac{72251}{168000}g_{2}+\frac{1593}{2800}g_{4}+\frac{3673}{1400}g_{6}\label{cert:boundary:3}\\
+% CERT|boundary|C3|23/1488*g0 + 27/80*g2 + 3/4*g4 + 5/2*g6
+\mathcal C_3 &= \frac{23}{1488}g_{0}+\frac{27}{80}g_{2}+\frac{3}{4}g_{4}+\frac{5}{2}g_{6}\label{cert:boundary:4}\\
+% CERT|boundary|C4|1771/80600*g0 + 847/3000*g2 + 21/50*g4 + 199/100*g6
+\mathcal C_4 &= \frac{1771}{80600}g_{0}+\frac{847}{3000}g_{2}+\frac{21}{50}g_{4}+\frac{199}{100}g_{6}\label{cert:boundary:5}\\
+% CERT|boundary|C5|41/1209*g0 + 8/15*g2 + 1*g4 + 31/8*g6
+\mathcal C_5 &= \frac{41}{1209}g_{0}+\frac{8}{15}g_{2}+g_{4}+\frac{31}{8}g_{6}\label{cert:boundary:6}\\
+% CERT|boundary|C6|75/3224*g0 + 7/120*g2 + 1/2*g4 + 1*g6
+\mathcal C_6 &= \frac{75}{3224}g_{0}+\frac{7}{120}g_{2}+\frac{1}{2}g_{4}+g_{6}\label{cert:boundary:7}\\
+% CERT|boundary|C7|0*g0
+\mathcal C_7 &= 0g_{0}\label{cert:boundary:8}\\
+% CERT|boundary|p-1/1000|12582057/72943000*g0 + 7/543*g2 + 785/362*g6 + 441/362*g8
+\mathfrak p-\frac1{1000} &= \frac{12582057}{72943000}g_{0}+\frac{7}{543}g_{2}+\frac{785}{362}g_{6}+\frac{441}{362}g_{8}\label{cert:boundary:9}\\
+% CERT|boundary|-alpha-1/1000|55847/403000*g0 + 61/60*g2 + 3*g4 + 5*g6
+-\mathfrak a-\frac1{1000} &= \frac{55847}{403000}g_{0}+\frac{61}{60}g_{2}+3g_{4}+5g_{6}\label{cert:boundary:10}\\
+% CERT|boundary|f+h-u-1/1000|82328171/823329000*g0 + 4907/20430*g2 + 362/681*g4 + 21/227*g8
+f+h-u-\frac1{1000} &= \frac{82328171}{823329000}g_{0}+\frac{4907}{20430}g_{2}+\frac{362}{681}g_{4}+\frac{21}{227}g_{8}\label{cert:boundary:11}\\
+% CERT|boundary|v-h-1/1000|16892171/218829000*g0 + 121/181*g2 + 1043/362*g6 + 63/362*g8
+v-h-\frac1{1000} &= \frac{16892171}{218829000}g_{0}+\frac{121}{181}g_{2}+\frac{1043}{362}g_{6}+\frac{63}{362}g_{8}\label{cert:boundary:12}\\
+% CERT|boundary|Berr1|733/4836*g0 + 7/60*g2 + 1*g4 + 1*g6
+\mathcal E_{\rm end} &= \frac{733}{4836}g_{0}+\frac{7}{60}g_{2}+g_{4}+g_{6}\label{cert:boundary:13}\\
+% CERT|boundary|Berr2|75/3224*g0 + 47/120*g2 + 1/2*g4 + 1/2*g6
+\mathcal E_{\rm curv} &= \frac{75}{3224}g_{0}+\frac{47}{120}g_{2}+\frac{1}{2}g_{4}+\frac{1}{2}g_{6}\label{cert:boundary:14}\\
+% CERT|boundary|q1|11899/282503*g0 + 3560/4907*g4 + 9897/9814*g6 + 909/1402*g8
+\Qone &= \frac{11899}{282503}g_{0}+\frac{3560}{4907}g_{4}+\frac{9897}{9814}g_{6}+\frac{909}{1402}g_{8}\label{cert:boundary:15}
+\end{align}
+\endgroup
+
+
+\subsection{Case B}
+On $u_0\le u\le\rho$, $9u/20\le v\le u$, take
+\[
+ b_0=1,\quad b_1=u-u_0,\quad b_2=\rho-u,\quad
+ b_3=v-9u/20,\quad b_4=u-v.
+\]
+For the seven exponents in \eqref{eq:Bexponents}, the certificates are
+\begingroup
+\small
+\begin{align}
+% CERT|case_b|theta-B1|415/9672*b0 + 13/120*b2 + 1/2*b3
+\theta-B_1 &= \frac{415}{9672}b_{0}+\frac{13}{120}b_{2}+\frac{1}{2}b_{3}\label{cert:case_b:1}\\
+% CERT|case_b|theta-B2|179/24180*b0 + 7/40*b1 + 3/2*b3
+\theta-B_2 &= \frac{179}{24180}b_{0}+\frac{7}{40}b_{1}+\frac{3}{2}b_{3}\label{cert:case_b:2}\\
+% CERT|case_b|theta-B3|11/241800*b0 + 3/400*b1 + 7/20*b3
+\theta-B_3 &= \frac{11}{241800}b_{0}+\frac{3}{400}b_{1}+\frac{7}{20}b_{3}\label{cert:case_b:3}\\
+% CERT|case_b|theta-B4|1699/106392*b0 + 3/88*b2 + 5/22*b3
+\theta-B_4 &= \frac{1699}{106392}b_{0}+\frac{3}{88}b_{2}+\frac{5}{22}b_{3}\label{cert:case_b:4}\\
+% CERT|case_b|theta-B5|593/24180*b0 + 9/40*b1 + 1/2*b3
+\theta-B_5 &= \frac{593}{24180}b_{0}+\frac{9}{40}b_{1}+\frac{1}{2}b_{3}\label{cert:case_b:5}\\
+% CERT|case_b|theta-B6|69/403*b0 + 1/6*b2
+\theta-B_6 &= \frac{69}{403}b_{0}+\frac{1}{6}b_{2}\label{cert:case_b:6}\\
+% CERT|case_b|theta-B7|621/4030*b0 + 7/60*b1 + 1*b3
+\theta-B_7 &= \frac{621}{4030}b_{0}+\frac{7}{60}b_{1}+b_{3}\label{cert:case_b:7}
+\end{align}
+\endgroup
+
+
+There are $14+15+15+7=51$ identities. Each Case B constant term is
+strictly positive, and the smallest is $11/241800$.
+Definitions \eqref{eq:deficit-D}--\eqref{eq:deficit-J} connect all
+certificates to the chosen local monomials and to both first-B errors.
+Together with the domain, range and integer-rounding arguments in the
+main text, they complete the parameter verification.
+
+
+\begin{thebibliography}{9}
+\bibitem{IZ}
+A.~Ivi\'c and W.~Zhai,
+\emph{Higher moments of the error term in the divisor problem},
+arXiv:0904.2271v3 (2010), Lemma~3, pp.~6--8.
+\url{https://arxiv.org/abs/0904.2271}.
+
+\bibitem{Vand}
+J.~Vandehey,
+\emph{Error term improvements for van der Corput transforms},
+arXiv:1205.0090v1 (2012), Theorem~1.1.
+\url{https://arxiv.org/abs/1205.0090}.
+
+\bibitem{HB}
+D.~R.~Heath-Brown,
+\emph{A new $k$-th derivative estimate for exponential sums via
+Vinogradov's mean value},
+arXiv:1601.04493v3 (2016), introduction, equation~(1).
+\url{https://arxiv.org/abs/1601.04493}.
+
+\bibitem{Basu}
+S.~Basu,
+\emph{Algorithmic Semi-Algebraic Geometry and Topology},
+survey, Section~2, including Theorem~2.3 and the discussion of projection
+and quantifier elimination.
+\url{https://www.math.purdue.edu/~sbasu/ams_final_submission.pdf}.
+\end{thebibliography}
+\end{document}
